@@ -5,4 +5,5 @@
 5. RTOS for F103RB 
 6. Standart timer stm32 F103RB  
 7. Interrupt for stm32 F103RB  
-8. Capture for stm32 F103RB  
+8. Capture for stm32 F103RB
+9. DMA for stm32 F103RB
