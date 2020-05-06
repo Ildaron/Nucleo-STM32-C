@@ -1,3 +1,7 @@
+Software - CoolTerm
+           Sockertest
+
+
 Settings for ESP8266  ESP-01
 1.1 Connect to computer by adapter ttl/usb
 1.2 Use terminal, for  example CoolTerm  
