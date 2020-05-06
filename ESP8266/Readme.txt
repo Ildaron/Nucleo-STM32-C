@@ -22,7 +22,7 @@ SocketTest Send from computer to ESP
 2.4 Set PORT and IP and connect
 2.5 Закрыть соединение можно командой AT+CIPCLOSE=0 
            
-           Send from ESP to computer
+           Send from ESP to computer   (not correct - AT+CIPSEND=0,16 > Ping Habrahabr SEND) 
         AT+CIPSEND=0,5
         подождать пока ESP ответит символом
         >
