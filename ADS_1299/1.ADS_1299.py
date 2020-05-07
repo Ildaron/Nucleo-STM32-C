@@ -124,28 +124,32 @@ int main(void)
 	  }
 
 
-// step 2 - convert dataset
-	  int received_byte=1234;
+
+
+	  void send_data_by_uart (received_byte)
+	  {
+	  // step 1 - convert dataset
 	  char buffer[16];
 	  char buffer1[16];
 	  sprintf(buffer1, "%d\n", received_byte);
-      int a;
+      int a=0;
 	  for (a; a<strlen(buffer1); a=a+1) //
-	{
+	         {
 		   if (buffer1[a]!= 0)
-		   	        	     {
+		   	        	      {
 		   buffer[0] = buffer1[a];
 		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
 	                          }
-	}
+	          }
 
-    a=0;
-// step 3 - UART
+           a=0;
+        // step 2 - send by uart UART
 	       HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
 
+	  }
 
-
-
+	  int test=1234;
+	  send_data_by_uart (test);
 
 	  HAL_Delay(500);
 	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
