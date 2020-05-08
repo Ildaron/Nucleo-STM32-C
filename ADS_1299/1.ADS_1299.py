@@ -25,10 +25,10 @@ int main(void)
 
   while (1)
   {
-
-
-
  	  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+
+
+
  	  void send_command(uint8_t cmd)
  	    {
  	  		    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
@@ -39,9 +39,6 @@ int main(void)
  	  	        HAL_Delay(10);
  	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
  	  	  }
-
-
-
 
 
  	  void send_data_by_uart (received_byte)
@@ -59,7 +56,6 @@ int main(void)
  	  		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
  	  	                          }
  	  	          }
-
  	             a=0;
  	          // step 2 - send by uart UART
  	  	       HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
@@ -68,11 +64,64 @@ int main(void)
 
 
 
- 	      int test=1234;
- 	  	  send_data_by_uart (test);
+
+ 	    void write_byte(int reg_addr, int val_hex) {
+ 	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+ 	     HAL_Delay(5);
+ 	     HAL_SPI_Transmit(&hspi3, (0x40 | reg_addr) ,1, 10);
+ 	     HAL_Delay(5);
+ 	     HAL_SPI_Transmit(&hspi3, 0x00,1, 10);
+ 	     HAL_Delay(10);
+ 	     HAL_SPI_Transmit(&hspi3,val_hex,1, 10);
+ 	     HAL_Delay(10);
+ 	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    }
+
+
+ 	    int read_byte(int reg_addr){
+ 	      int out = 0;
+ 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+ 	      HAL_SPI_Transmit(&hspi3, (0x20 | reg_addr) ,1, 10);
+ 	      HAL_Delay(5);
+ 	      HAL_SPI_Transmit(&hspi3, 0x00 ,1, 10);
+ 	      HAL_Delay(5);
+ 	      HAL_SPI_Transmit(&hspi3, 0x00 ,1, 10);
+   	      HAL_Delay(1);
+   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	      return(out);
+ 	    }
+
+
+ 	      //int test=1234;
+ 	  	//  send_data_by_uart (test);
+
  	  	  HAL_Delay(1000);
  	  	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
  	  	  HAL_Delay(1000);
+
+ 	  	  send_command (SDATAC);
+
+ 	      int CONFIG1 = 0x01;
+ 	      int CONFIG2 = 0x02;
+		  int CONFIG3 = 0x03;
+
+ 	      write_byte(CONFIG1, 0x96);
+ 	      write_byte(CONFIG2, 0xD1);
+ 	      write_byte(CONFIG3, 0xE0);
+
+
+ 	      //test
+ 	      int CH1SET =  0x05;
+ 	      write_byte(CH1SET, 0x05);
+
+
+ 	      // ЗДЕСТЬ
+ 	      chSet = read_byte(CH1SET);
+ 	      send_data_by_uart (chSet);
+
+
+
+
    }
   /* USER CODE END 3 */
 }
@@ -169,7 +218,7 @@ static void MX_UART5_Init(void)
 
   /* USER CODE END UART5_Init 1 */
   huart5.Instance = UART5;
-  huart5.Init.BaudRate = 115200;
+  huart5.Init.BaudRate = 9600;
   huart5.Init.WordLength = UART_WORDLENGTH_8B;
   huart5.Init.StopBits = UART_STOPBITS_1;
   huart5.Init.Parity = UART_PARITY_NONE;
