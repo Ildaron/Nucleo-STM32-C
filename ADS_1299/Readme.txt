@@ -26,3 +26,14 @@ First command byte: 010r rrrr, where r rrrr is the starting register address.
 BYTE 1 = 0010 0000
 
 3. Test signal 
+
+
+
+
+
+
+
+
+
+
+
