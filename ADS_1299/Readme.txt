@@ -18,5 +18,7 @@ Figure 46. - схема передачи данных
 0b11010100
 0b11100000
 Схема отправки - Figure 49.
-
+Причем преждем чем отправить данные регистра
+First command byte: 010r rrrr, where r rrrr is the starting register address.
+Второй байт команды: 000n nnnn, где n nnnn - количество записываемых регистров - 1.
 3. Test signal 
