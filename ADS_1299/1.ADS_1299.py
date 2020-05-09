@@ -19,109 +19,140 @@ int main(void)
   MX_UART5_Init();
   MX_SPI3_Init();
 
-  int received_byte;
-  int SDATAC=17;
+   int received_byte;
+   int SDATAC = 0x11;
+   int RESET = 0x06;
+
+   int CONFIG1 = 0x01;
+   int CONFIG2 = 0x02;
+   int CONFIG3 = 0x03;
+
+
+
+   //reset communication, see datasheet
+   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+   HAL_SPI_Transmit(&hspi3,RESET,1, 8);
+   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+
+
+ //  step_1 my Functions
+
+  void send_command(uint8_t cmd)
+  	    {
+  	  		    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	  	        HAL_Delay(10);
+  	  	        //SPI.transfer(cmd);
+  	  	        HAL_SPI_Transmit(&hspi3, (uint16_t*)&cmd,1, 10);
+  	  	        HAL_SPI_Receive(&hspi3, (uint16_t*)&received_byte, 1, 10);
+  	  	        HAL_Delay(10);
+  	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+  	  	  }
+
+
+  	  void send_data_by_uart (received_byte)
+  	  	  {
+  	  	  // step 1 - convert dataset
+  	  	  char buffer[16];
+  	  	  char buffer1[16];
+  	  	  sprintf(buffer1, "%d\n", received_byte);
+  	        int a=0;
+  	  	  for (a; a<strlen(buffer1); a=a+1) //
+  	  	         {
+  	  		   if (buffer1[a]!= 0)
+  	  		   	        	      {
+  	  		   buffer[0] = buffer1[a];
+  	  		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
+  	  	                          }
+  	  	          }
+  	             a=0;
+  	          // step 2 - send by uart UART
+  	  	       HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
+
+  	  	  }
+
+
+
+#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
+#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
+  	  void DWT_Init(void)
+  	  {
+  	      SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  	      DWT_CONTROL |= DWT_CTRL_CYCCNTENA_Msk;
+  	  }
+  	void delay_us(uint32_t us)
+  	{
+  	    uint32_t us_count_tic =  us * (SystemCoreClock / 1000000);
+  	    DWT->CYCCNT = 0U;
+  	    while(DWT->CYCCNT < us_count_tic);
+  	}
+  	DWT_Init();
+
+  	    void write_byte(int reg_addr, int val_hex)
+  	    {
+  	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	     delay_us(5);
+  	     int adress = 0x40 | reg_addr;
+  	     HAL_SPI_Transmit(&hspi3, adress, 1,  0x1000);
+  	     delay_us(5);
+  	     int empty_byte =  0x00;
+  	     HAL_SPI_Transmit(&hspi3, 0x00, 1,  0x1000);
+  	     delay_us(5);
+  	     HAL_SPI_Transmit(&hspi3, val_hex, 1,  0x1000);
+  	     delay_us(10);
+  	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+  	    }
+
+  	    int read_byte(char reg_addr)
+  	    {
+  	     // char out = 5;
+  	      int out;
+  	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	      delay_us(1);
+  	      int adress = 0x20 | reg_addr;
+  	      HAL_SPI_Transmit(&hspi3, adress, 1,  0x1000);
+  	      delay_us (5);
+  	      int empty_byte =  0x00;
+  	      HAL_SPI_Transmit(&hspi3, 0x00, 1,  0x1000);
+  	      delay_us(5);
+  	      HAL_SPI_Receive(&hspi3, out, 1,  0x1000);
+  	      delay_us(1);
+    	  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+   // 	  HAL_Delay(1);
+  	      return(out);
+  	    }
+
+  	    void live_bits ()
+  	    {
+  	      HAL_Delay(100);
+  	      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
+  	      HAL_Delay(100);
+  	    }
+
 
 
   while (1)
   {
- 	  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-
-
-
- 	  void send_command(uint8_t cmd)
- 	    {
- 	  		    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
- 	  	        HAL_Delay(10);
- 	  	        //SPI.transfer(cmd);
- 	  	        HAL_SPI_Transmit(&hspi3, (uint16_t*)&cmd,1, 10);
- 	  	        HAL_SPI_Receive(&hspi3, (uint16_t*)&received_byte, 1, 10);
- 	  	        HAL_Delay(10);
- 	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	  	  }
-
-
- 	  void send_data_by_uart (received_byte)
- 	  	  {
- 	  	  // step 1 - convert dataset
- 	  	  char buffer[16];
- 	  	  char buffer1[16];
- 	  	  sprintf(buffer1, "%d\n", received_byte);
- 	        int a=0;
- 	  	  for (a; a<strlen(buffer1); a=a+1) //
- 	  	         {
- 	  		   if (buffer1[a]!= 0)
- 	  		   	        	      {
- 	  		   buffer[0] = buffer1[a];
- 	  		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
- 	  	                          }
- 	  	          }
- 	             a=0;
- 	          // step 2 - send by uart UART
- 	  	       HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
-
- 	  	  }
-
-
-
-
- 	    void write_byte(int reg_addr, int val_hex) {
- 	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
- 	     HAL_Delay(5);
- 	     HAL_SPI_Transmit(&hspi3, (0x40 | reg_addr) ,1, 10);
- 	     HAL_Delay(5);
- 	     HAL_SPI_Transmit(&hspi3, 0x00,1, 10);
- 	     HAL_Delay(10);
- 	     HAL_SPI_Transmit(&hspi3,val_hex,1, 10);
- 	     HAL_Delay(10);
- 	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	    }
-
-
- 	    int read_byte(int reg_addr){
- 	      int out = 0;
- 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
- 	      HAL_SPI_Transmit(&hspi3, (0x20 | reg_addr) ,1, 10);
- 	      HAL_Delay(5);
- 	      HAL_SPI_Transmit(&hspi3, 0x00 ,1, 10);
- 	      HAL_Delay(5);
- 	      HAL_SPI_Transmit(&hspi3, 0x00 ,1, 10);
-   	      HAL_Delay(1);
-   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	      return(out);
- 	    }
-
-
- 	      //int test=1234;
- 	  	//  send_data_by_uart (test);
-
- 	  	  HAL_Delay(1000);
- 	  	  HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
- 	  	  HAL_Delay(1000);
-
- 	  	  send_command (SDATAC);
-
- 	      int CONFIG1 = 0x01;
- 	      int CONFIG2 = 0x02;
-		  int CONFIG3 = 0x03;
-
+	      live_bits ();
+	      // HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+	      HAL_Delay(500);
+	      send_command(SDATAC);
+	      // HAL_Delay(10);
+//  Step.2 - Write configuarations bits
+	     // HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+	     // HAL_Delay(1);
  	      write_byte(CONFIG1, 0x96);
- 	      write_byte(CONFIG2, 0xD1);
- 	      write_byte(CONFIG3, 0xE0);
 
 
- 	      //test
- 	      int CH1SET =  0x05;
- 	      write_byte(CH1SET, 0x05);
+ //	      HAL_Delay(10);
+ //	      write_byte(CONFIG2, 0xD1);
+ //  	  HAL_Delay(10);
+ //	      write_byte(CONFIG3, 0xE0);
+ 	      HAL_Delay(500);
 
 
- 	      // ЗДЕСТЬ
- 	      chSet = read_byte(CH1SET);
- 	      send_data_by_uart (chSet);
-
-
-
-
+// Step.3 - Read configuarations bits
+ 	     int Read_con = read_byte(CONFIG1);
+   	     send_data_by_uart (Read_con);
    }
   /* USER CODE END 3 */
 }
