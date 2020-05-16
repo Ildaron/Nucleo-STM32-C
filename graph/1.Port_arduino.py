@@ -1,5 +1,5 @@
-# source https://www.thepoorengineer.com/en/arduino-python-plot/
-
+# initial source https://www.thepoorengineer.com/en/arduino-python-plot/
+# changed for windows
 from threading import Thread
 import serial
 import time
