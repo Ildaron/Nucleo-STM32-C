@@ -1,4 +1,4 @@
-# 
+# source https://www.thepoorengineer.com/en/arduino-python-plot/
 
 from threading import Thread
 import serial
