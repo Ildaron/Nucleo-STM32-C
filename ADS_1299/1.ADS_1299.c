@@ -28,9 +28,28 @@ int main(void)
    uint8_t CONFIG1 = 0x01;
    uint8_t CONFIG2 = 0x02;
    uint8_t CONFIG3 = 0x03;
-//   uint8_t START = 0x08;
+   uint8_t START = 0x08;
    uint8_t test = 0x00;
- //  uint8_t RDATAC = 0x10;
+   uint8_t RDATAC = 0x10;
+
+
+
+
+   uint8_t CH1SET = 0x05;
+   uint8_t CH2SET = 0x06;
+   uint8_t CH3SET = 0x07;
+   uint8_t CH4SET = 0x08;
+   uint8_t CH5SET = 0x09;
+   uint8_t CH6SET = 0x0A;
+   uint8_t CH7SET = 0x0B;
+   uint8_t CH8SET = 0x0C;
+
+
+
+
+
+
+
 
 
 #define DWT_CONTROL *(volatile unsigned long *)0xE0001000
@@ -86,9 +105,6 @@ int main(void)
   	    void write_byte(uint8_t reg_addr, uint8_t val_hex)
   	    {
   	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	    // delay_us(5);
-  	   //  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	   //  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
   	     uint8_t adress = 0x40|reg_addr;
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&adress, 1, 0x1000);
   	  //   delay_us(5);
@@ -108,20 +124,11 @@ int main(void)
 
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
   	      delay_us(20);
-  	  //    HAL_SPI_Transmit(&hspi3, (uint8_t*)&SDATAC, 1, 0x1000);
-  	 //   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	   //  	 HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
   	      uint8_t adress = 0x20 | reg_addr ;  //
-  	//      delay_us(50);
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*) &adress, 1 ,0x1000);
-  	 //
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*)&test, 1, 0x1000);
-  	//      delay_us(5);
   	     // HAL_SPI_Receive(&hspi3, (uint8_t*)&out,1, 0x1000);
   	      HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&out,1,0x1000);
-
-  	//      delay_us(1);
-  //	      delay_us(1);
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
     	  return(out);
 
@@ -135,23 +142,11 @@ int main(void)
   	    }
 
 
-  //	    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	    //reset communication, see datasheet
 
-  //	     delay_us(10);
-  //	    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
- // 	    HAL_SPI_Transmit(&hspi3, (uint8_t*)&RESET, 1, 0x1000);
-  //	    delay_us(40);
- // 	    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
   	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
   	   delay_us(100);
 
-   //      send_command(RESET);
-   //       delay_us(10);
-       //   int chSet = read_byte(0x00);
-        //  send_data_by_uart (chSet);
-       //   delay_us(10);
   	                          send_command(SDATAC);
   	                          delay_us(200);
   	                                HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
@@ -164,14 +159,8 @@ int main(void)
   	   	    	//
   	   	    	 	    	// 	//   send_command(START);
   	   	    	 	    	  delay_us(200);
-
   	   	    	 	      	  send_command(SDATAC);
 
-
-  	   	    	 	    	   	   //  delay_us(100);
-
-
-//
   	   	    	 	    	 	      write_byte(CONFIG1, 0xD6); // 96
   	   	    	 	    	 	      delay_us(10);
   	   	    	 	   	 	          write_byte(CONFIG2, 0xD1);
@@ -180,41 +169,47 @@ int main(void)
   	   	    	 	    	 	      delay_us(10);
 
 
+  	   	    	 	    	   	      write_byte(CH1SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH2SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH3SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH4SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH5SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH6SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH7SET, 0x05); //
+  	   	    	 	    	 	      write_byte(CH8SET, 0x05); //
+
+
+  	   	    	 	    	 	      
+  	   	    	 	    	 	      
+  	   	    	 	    	 	      send_command(RDATAC);
+  	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	   	    	 	    	 	      delay_us(200);
+  	   	    	 	    	 	      send_command(START);  	 	    	 	      
+  	   	    	 	    	 	      
+  	   	    	 	    	 	      
+  	   	    	 	    	 	      
+  	   	    	 	    	 	      
+
  	      while (1)
   {
 
+ 	     uint8_t chSet = read_byte(CH1SET);
+ 	     send_data_by_uart(chSet);
 
-//	      live_bits ();
-	//      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-//	      HAL_Delay(500);
-
-	      // HAL_Delay(10);
-//  Step.2 - Write configuarations bits
-	     // HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-	     // HAL_Delay(1);
-
-
- 	  //   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	  //   HAL_Delay(1);
- 	   //  delay_us(100);
-
-// Step.3 - Read configuarations bits
-
- 	   	   //           int chSet = read_byte(0x00);
- 	    	//          send_data_by_uart (chSet);
- 	    	//          delay_us(1000);
-
- 	     int Read_con = read_byte(CONFIG2);
+ 	     int Read_con = read_byte(CONFIG3);
   	     send_data_by_uart(Read_con);
 
    	 //   HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
     	delay_us(50);
 
    }
-
+  /* USER CODE END 3 */
 }
 
-
+/**
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
