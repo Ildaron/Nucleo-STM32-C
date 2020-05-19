@@ -1,6 +1,5 @@
 
 #include "main.h"
-
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
 
@@ -31,7 +30,7 @@ int main(void)
    uint8_t START = 0x08;
    uint8_t test = 0x00;
    uint8_t RDATAC = 0x10;
-
+   uint8_t STOP = 0x0a;
 
 
 
@@ -46,8 +45,8 @@ int main(void)
 
 
 
-
-
+   uint8_t received_Byte;
+   long output[9];
 
 
 
@@ -76,7 +75,7 @@ int main(void)
   	  	        HAL_SPI_Transmit(&hspi3, (uint8_t*)&cmd,1, 0x1000);
   	  	        delay_us(20);
   	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	  	       delay_us(3);
+  	  	        delay_us(3);
   	  	  }
 
 
@@ -86,7 +85,7 @@ int main(void)
   	  	  char buffer[16];
   	  	  char buffer1[16];
   	  	  sprintf(buffer1, "%d\n", received_byte);
-  	        int a=0;
+  	      int a=0;
   	  	  for (a; a<strlen(buffer1); a=a+1) //
   	  	         {
   	  		   if (buffer1[a]!= 0)
@@ -97,7 +96,7 @@ int main(void)
   	  	          }
   	             a=0;
   	          // step 2 - send by uart UART
-  	  	       HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
+  	  	    //   HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
 
   	  	  }
 
@@ -179,32 +178,76 @@ int main(void)
   	   	    	 	    	 	      write_byte(CH8SET, 0x05); //
 
 
-  	   	    	 	    	 	      
-  	   	    	 	    	 	      
+
+  	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+
   	   	    	 	    	 	      send_command(RDATAC);
-  	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	   	    	 	    	 	      delay_us(200);
-  	   	    	 	    	 	      send_command(START);  	 	    	 	      
-  	   	    	 	    	 	      
-  	   	    	 	    	 	      
-  	   	    	 	    	 	      
-  	   	    	 	    	 	      
+  	   	    	 	    	 	      delay_us(150);
+  	   	    	 	    	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
+
+
 
  	      while (1)
   {
 
- 	     uint8_t chSet = read_byte(CH1SET);
- 	     send_data_by_uart(chSet);
 
- 	     int Read_con = read_byte(CONFIG3);
-  	     send_data_by_uart(Read_con);
+ 	    	 send_command(START);
+ 	    	 delay_us(50);
+
+
+ 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
+
+ 	   // 	if(digitalRead(IPIN_DRDY) == LOW){
+ 	    	           // t0 = micros();
+
+ 	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+
+
+ 	    	            long dataPacket;
+ 	    	            for(int i = 0; i<9; i++){
+ 	    	                for(int j = 0; j<3; j++){
+ 	    	                   // byte dataByte = SPI.transfer(0x00);
+
+ 	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
+
+ 	    	                    dataPacket = (dataPacket<<8) | received_Byte;
+ 	    	                }
+
+ 	    	                output[i] = dataPacket;
+ 	    	                dataPacket = 0;
+ 	    	            }
+
+ 	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+
+ 	    	           send_data_by_uart(output[4]);
+ 	    	          send_command(STOP);
+ 	    	 }
+
+
+
+
+
+ 	    //	delay_us(200);
+
+
+
+ 	   //  int Read_con = read_byte(CONFIG3);
+
+ 	    //	send_data_by_uart(output[5]);
+
+
+ 	    	         //int Read_con = read_byte(CONFIG3);
+ 	    	  	    // send_data_by_uart(Read_con);
+
 
    	 //   HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
-    	delay_us(50);
+
 
    }
-  /* USER CODE END 3 */
+
 }
+  /* USER CODE END 3 */
+
 
 /**
   * @brief System Clock Configuration
@@ -265,10 +308,10 @@ static void MX_SPI3_Init(void)
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
   hspi3.Init.DataSize = SPI_DATASIZE_8BIT;
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
-  hspi3.Init.CLKPhase = SPI_PHASE_2EDGE;     // 2edje - bad
+  hspi3.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;//64 almost a good   4
-  hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;    // ok
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
   hspi3.Init.CRCPolynomial = 10;
@@ -370,6 +413,12 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : DRDY_Pin */
+  GPIO_InitStruct.Pin = DRDY_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(DRDY_GPIO_Port, &GPIO_InitStruct);
 
 }
 
