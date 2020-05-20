@@ -1,4 +1,3 @@
-
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
@@ -47,7 +46,7 @@ int main(void)
 
    uint8_t received_Byte;
    long output[9];
-
+   long dataPacket;
 
 
 
@@ -168,31 +167,45 @@ int main(void)
   	   	    	 	    	 	      delay_us(10);
 
 
-  	   	    	 	    	   	      write_byte(CH1SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH2SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH3SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH4SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH5SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH6SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH7SET, 0x05); //
-  	   	    	 	    	 	      write_byte(CH8SET, 0x05); //
+  	   	    	 	    	   	      write_byte(CH1SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //5
+  	   	    	 	    	 	     write_byte(CH5SET, 0x00); //
+  	   	    	 	    	 	      write_byte(CH6SET, 0x00); //
+  	   	    	 	    	 	      write_byte(CH7SET, 0x00); //
+  	   	    	 	    	 	      write_byte(CH8SET, 0x00); //
 
 
 
   	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
-  	   	    	 	    	 	      send_command(RDATAC);
+  	   	    	 	    	 //	      send_command(RDATAC);
   	   	    	 	    	 	      delay_us(150);
   	   	    	 	    	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
+
+
+  	   	    	 	    	    delay_us(150);
+
+
+  	   	    	 	 	    	 send_command(START);
+  	   	    	 	 	//    	 delay_us(5);
+  	   	    	 	 	       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	   	    	 	 	 //    delay_us(5);
+  	   	    	 	 	      //  delay_us(50);
+  	   	    	 	 	        send_command(RDATAC);
+  	   	    	 	 //	 delay_us(5);
+  	   	    	 	  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+
+
+
+
 
 
 
  	      while (1)
   {
 
-
- 	    	 send_command(START);
- 	    	 delay_us(50);
 
 
  	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
@@ -203,24 +216,29 @@ int main(void)
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
 
 
- 	    	            long dataPacket;
+
  	    	            for(int i = 0; i<9; i++){
  	    	                for(int j = 0; j<3; j++){
  	    	                   // byte dataByte = SPI.transfer(0x00);
 
  	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
-
  	    	                    dataPacket = (dataPacket<<8) | received_Byte;
  	    	                }
 
  	    	                output[i] = dataPacket;
  	    	                dataPacket = 0;
- 	    	            }
+ 	    	                }
 
  	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
- 	    	           send_data_by_uart(output[4]);
- 	    	          send_command(STOP);
+                        float voltage = (output[7]*4.5)/16777216;
+ 	    	          // float voltage = (output[7]*4.5)/16777216;‬
+ 	    	           int voltage1 = voltage*10;
+ 	    	    //      send_data_by_uart(output[7]);
+ 	    	     //     send_data_by_uart(output[6]);
+ 	    	     //     send_data_by_uart(output[5]);
+ 	    	          send_data_by_uart(voltage1);
+ 	    	 //         send_command(STOP);
  	    	 }
 
 
