@@ -5,7 +5,7 @@
   AT+INQ                              - поиск устройств
   
   AT+PAIR=АДРЕС,ТАЙМАУТ\r\n           - создать пару  AT+PAIR=f188a9de0497,5
-	AT+LINK=АДРЕС\r\n             -  подлкючиться к устпуству AT+LINK==f188a9de0497
+  AT+LINK=АДРЕС\r\n                   -  подлкючиться к устпуству AT+LINK==f188a9de0497
   
 https://wiki.iarduino.ru/page/at-komandy-bluetooth-hc-05  
 AT+DISC\r\n - Разорвать соединение (на случай если модуль соединён).
