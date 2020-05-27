@@ -156,26 +156,37 @@ int main(void)
 
   	   	    	//
   	   	    	 	    	// 	//   send_command(START);
-  	   	    	 	    	  delay_us(200);
-  	   	    	 	      	  send_command(SDATAC);
+  	   	    	 	    	          delay_us(200);
+  	   	    	 	      	          send_command(SDATAC);
 
   	   	    	 	    	 	      write_byte(CONFIG1, 0xD6); // 96
   	   	    	 	    	 	      delay_us(10);
-  	   	    	 	   	 	          write_byte(CONFIG2, 0xD1);
+  	   	    	 	   	 	          write_byte(CONFIG2, 0xD1);  //D1
   	   	    	 	    	 	      delay_us(10);
-  	   	    	 	    	 	      write_byte(CONFIG3, 0xE0);
+  	   	    	 	    	 	      write_byte(CONFIG3, 0xEC); //
   	   	    	 	    	 	      delay_us(10);
 
 
-  	   	    	 	    	   	      write_byte(CH1SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //5
-  	   	    	 	    	 	     write_byte(CH5SET, 0x00); //
-  	   	    	 	    	 	      write_byte(CH6SET, 0x00); //
-  	   	    	 	    	 	      write_byte(CH7SET, 0x00); //
-  	   	    	 	    	 	      write_byte(CH8SET, 0x00); //
 
+
+
+  	   	    	 	    	  	     write_byte(CH1SET, 0x00); //
+
+  	   	    	 	    	 	     write_byte(CH2SET, 0x80); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x80); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x80); //5
+  	   	    	 	    	 	     write_byte(CH5SET, 0x80); //
+  	   	    	 	    	 	     write_byte(CH6SET, 0x80); //
+  	   	    	 	    	 	     write_byte(CH7SET, 0x80); //
+  	   	    	 	    	 	     write_byte(CH8SET, 0x80); //
+
+  	   	    	 	    	 	     uint8_t MISC1 = 0x15;
+  	   	    	 	    	 	     write_byte(MISC1, 0x20);
+
+
+  	   	    	 	    	 	     write_byte(0x0D, 0x00);
+
+  	   	    	 	    	 	     write_byte(0x0E, 0x00);
 
 
   	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
@@ -185,7 +196,7 @@ int main(void)
   	   	    	 	    	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
 
 
-  	   	    	 	    	    delay_us(150);
+  	   	    	 	    	     delay_us(150);
 
 
   	   	    	 	 	    	 send_command(START);
@@ -195,8 +206,7 @@ int main(void)
   	   	    	 	 	      //  delay_us(50);
   	   	    	 	 	        send_command(RDATAC);
   	   	    	 	 //	 delay_us(5);
-  	   	    	 	  HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-
+  	   	    	 	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
 
 
@@ -206,16 +216,9 @@ int main(void)
  	      while (1)
   {
 
-
-
  	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
 
- 	   // 	if(digitalRead(IPIN_DRDY) == LOW){
- 	    	           // t0 = micros();
-
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-
-
 
  	    	            for(int i = 0; i<9; i++){
  	    	                for(int j = 0; j<3; j++){
@@ -230,14 +233,16 @@ int main(void)
  	    	                }
 
  	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	           delay_us(200);
+ 	    	//           send_data_by_uart(output[0]);
 
-                        float voltage = (output[7]*4.5)/16777216;
- 	    	          // float voltage = (output[7]*4.5)/16777216;‬
- 	    	           int voltage1 = voltage*10;
+                        float voltage = (output[1]*4.5)/16777216;
+ //	    	      ‬
+ 	    	            int voltage1 = voltage*1000;
  	    	    //      send_data_by_uart(output[7]);
  	    	     //     send_data_by_uart(output[6]);
- 	    	     //     send_data_by_uart(output[5]);
- 	    	          send_data_by_uart(voltage1);
+ 	    	            send_data_by_uart(voltage1);
+
  	    	 //         send_command(STOP);
  	    	 }
 
@@ -245,7 +250,7 @@ int main(void)
 
 
 
- 	    //	delay_us(200);
+ 	    	//delay_us(200);
 
 
 
@@ -263,9 +268,10 @@ int main(void)
 
    }
 
-}
-  /* USER CODE END 3 */
 
+  /* USER CODE END 3 */
+  /* USER CODE END 3 */
+}
 
 /**
   * @brief System Clock Configuration
