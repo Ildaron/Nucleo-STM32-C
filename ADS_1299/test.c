@@ -1,4 +1,3 @@
-
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
@@ -51,31 +50,31 @@ int main(void)
 
 
 
-#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
-#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
-  	  void DWT_Init(void)
-  	  {
-  	      SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
-  	      DWT_CONTROL |= DWT_CTRL_CYCCNTENA_Msk;
-  	  }
-  	void delay_us(uint32_t us)
-  	{
-  	    uint32_t us_count_tic =  us * (SystemCoreClock / 1000000);
-  	    DWT->CYCCNT = 0U;
-  	    while(DWT->CYCCNT < us_count_tic);
-  	}
-  	DWT_Init();
+//#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
+//#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
+//  	  void DWT_Init(void)
+//  	  {
+/////  	      SCB_DEMCR |= CoreDebug_DEMCR_TRCENA_Msk;
+  	   //   DWT_CONTROL |= DWT_CTRL_CYCCNTENA_Msk;
+  //	  }
+  //	void delay_us(uint32_t us)
+  //	{
+  //	    uint32_t us_count_tic =  us * (SystemCoreClock / 1000000);
+  //	    DWT->CYCCNT = 0U;
+  //	    while(DWT->CYCCNT < us_count_tic);
+  ////	}
+  //	DWT_Init();
 
 
 
   void send_command(uint8_t cmd)
   	    {
   	  		    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	  	     	delay_us(20);
+  	  	  //   	delay_us(20);
   	  	        HAL_SPI_Transmit(&hspi3, (uint8_t*)&cmd,1, 0x1000);
-  	  	        delay_us(20);
+  	  	   //     delay_us(20);
   	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	  	        delay_us(3);
+  	  	    //    delay_us(3);
   	  	  }
 
 
@@ -110,7 +109,7 @@ int main(void)
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&test, 1, 0x1000);
   	 //    delay_us(5);
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&val_hex, 1, 0x1000);
-  	     delay_us(50);
+  	//     delay_us(50);
     	// delay_us(2);
     	 HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
   	    }
@@ -122,7 +121,7 @@ int main(void)
   	      uint8_t out;
 
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	      delay_us(20);
+  	   //   delay_us(20);
   	      uint8_t adress = 0x20 | reg_addr ;  //
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*) &adress, 1 ,0x1000);
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*)&test, 1, 0x1000);
@@ -144,34 +143,42 @@ int main(void)
 
 
   	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	   delay_us(100);
+  	//   delay_us(100);
 
   	                          send_command(SDATAC);
-  	                          delay_us(200);
+  	                      //    delay_us(200);
   	                                HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
 
   	   	    	 	    	  	   // HAL_SPI_Transmit(&hspi3, (uint8_t*)&place, 1, 0x1000);
   	   	    	 	  	            HAL_SPI_Transmit(&hspi3, (uint8_t*)&RESET, 1, 0x1000);
-  	   	    	 	    	  	    delay_us(72);
+  	   	    	 	    	//  	    delay_us(72);
   	   	    	 	    	 	    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
-  	   	    	//
+
+  	   	    	 	    	 	HAL_Delay(1000);
   	   	    	 	    	// 	//   send_command(START);
-  	   	    	 	    	          delay_us(200);
+  	   	    	 	    	      //    delay_us(200);
   	   	    	 	      	          send_command(SDATAC);
 
+
+
+
+  	   	    	 	      	  write_byte(CONFIG3, 0xE0); //
+  	   	    	 	      	   	   	    	 	    	 	   //   delay_us(10);
+  	   	    	 	      	 HAL_Delay(1000);
+
+
+
   	   	    	 	    	 	      write_byte(CONFIG1, 0xD6); // 96
-  	   	    	 	    	 	      delay_us(10);
+  	   	    	 	    	 	   //   delay_us(10);
   	   	    	 	   	 	          write_byte(CONFIG2, 0xD1);  //D1
-  	   	    	 	    	 	      delay_us(10);
-  	   	    	 	    	 	      write_byte(CONFIG3, 0xEC); //
-  	   	    	 	    	 	      delay_us(10);
+  	   	    	 	    	 	   //   delay_us(10);
 
 
 
 
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x00); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x08); //
 
   	   	    	 	    	 	     write_byte(CH2SET, 0x80); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x80); //
@@ -193,11 +200,11 @@ int main(void)
   	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
   	   	    	 	    	 //	      send_command(RDATAC);
-  	   	    	 	    	 	      delay_us(150);
+  	   	    	 	    	 	    //  delay_us(150);
   	   	    	 	    	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
 
 
-  	   	    	 	    	     delay_us(150);
+  	   	    	 	    	    // delay_us(150);
 
 
   	   	    	 	 	    	 send_command(START);
@@ -215,7 +222,7 @@ int main(void)
 
 
  	      while (1)
-  {
+  {  HAL_Delay(100);
 
  	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
 
@@ -235,14 +242,16 @@ int main(void)
  	    	                }
 
  	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	    	           delay_us(200);
- 	    	//           send_data_by_uart(output[0]);
+ 	    	     //      delay_us(200);
+ 	    	        //   send_data_by_uart(output[1]);
 
-                        float voltage = (output[1]*4.5)/16777216;
+                        float voltage = (output[1]*3.3)/16777216;
  //	    	      ‬
- 	    	            int voltage1 = voltage*2000;
+ 	    	            int voltage1 = voltage*1000;
  	    	      //    send_data_by_uart(output[7]);
  	    	     //     send_data_by_uart(output[6]);
+
+
  	    	            send_data_by_uart(voltage1);
 
  	    	 //         send_command(STOP);
