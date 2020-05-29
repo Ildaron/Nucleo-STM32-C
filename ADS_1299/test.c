@@ -45,8 +45,8 @@ int main(void)
 
 
    uint8_t received_Byte;
-   long output[9];
-   long dataPacket;
+   int output[9];
+   int dataPacket;
 
 
 
@@ -163,24 +163,19 @@ int main(void)
 
 
 
-  	   	    	 	      	  write_byte(CONFIG3, 0xE0); //
+  	   	    	 	      	  write_byte(CONFIG3, 0xEC); //
   	   	    	 	      	   	   	    	 	    	 	   //   delay_us(10);
-  	   	    	 	      	 HAL_Delay(1000);
+  	   	    	 	      	 HAL_Delay(100);
 
 
 
-  	   	    	 	    	 	      write_byte(CONFIG1, 0xD6); // 96
+  	   	    	 	    	 	      write_byte(CONFIG1, 0x96); // 96
   	   	    	 	    	 	   //   delay_us(10);
-  	   	    	 	   	 	          write_byte(CONFIG2, 0xD1);  //D1
+  	   	    	 	   	 	          write_byte(CONFIG2, 0xC0);  //D1
   	   	    	 	    	 	   //   delay_us(10);
 
-
-
-
-
-  	   	    	 	    	  	     write_byte(CH1SET, 0x08); //
-
-  	   	    	 	    	 	     write_byte(CH2SET, 0x80); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x08); // 08
+  	   	    	 	    	 	     write_byte(CH2SET, 0x08); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x80); //
   	   	    	 	    	 	     write_byte(CH4SET, 0x80); //5
   	   	    	 	    	 	     write_byte(CH5SET, 0x80); //
@@ -189,8 +184,11 @@ int main(void)
   	   	    	 	    	 	     write_byte(CH8SET, 0x80); //
 
   	   	    	 	    	 	     uint8_t MISC1 = 0x15;
-  	   	    	 	    	 	     write_byte(MISC1, 0x20);
+  	   	    	 	    	 	     write_byte(MISC1, 0x20);//0x20
+  	   	    	 	    	 	     write_byte(0x16, 0x00);//0x20
 
+  	   	    	 	    	 	   //  write_byte(0x0E, 0xFF);//0x20
+  	   	    	 	    	 	  //   write_byte(0x0D, 0xFF);//0x20
 
   	   	    	 	    	// 	     write_byte(0x0D, 0x00);
 
@@ -224,36 +222,36 @@ int main(void)
  	      while (1)
   {  HAL_Delay(100);
 
- 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
-
+ 	       	            if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
+ 	    		        HAL_Delay(1);
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-
- 	    	            for(int i = 0; i<2; i++){
+ 	    	            HAL_Delay(1);
+ 	    	            received_Byte=0;
+ 	    	            for(int i = 0; i<9; i++){
  	    	            	dataPacket = 0;
  	    	                for(int j = 0; j<3; j++){
- 	    	                   // byte dataByte = SPI.transfer(0x00);
 
  	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
- 	    	                    dataPacket = (dataPacket<<8) | received_Byte;
+ 	    	                    dataPacket=dataPacket<<8;
+ 	    	                    dataPacket = dataPacket| received_Byte;
  	    	                }
 
  	    	                output[i] = dataPacket;
  	    	                dataPacket = 0;
  	    	                }
+ 	    	         //   HAL_Delay(1);
+ 	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	            HAL_Delay(1);
 
- 	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	    	     //      delay_us(200);
- 	    	        //   send_data_by_uart(output[1]);
-
-                        float voltage = (output[1]*3.3)/16777216;
- //	    	      ‬
- 	    	            int voltage1 = voltage*1000;
- 	    	      //    send_data_by_uart(output[7]);
- 	    	     //     send_data_by_uart(output[6]);
+ 	    	   //        send_data_by_uart(output[1]);
+ 	    	           send_data_by_uart(output[2]);
+ 	    	          //  send_data_by_uart(output[1]);
 
 
- 	    	            send_data_by_uart(voltage1);
-
+                   //     float voltage = (output[1]*3.3)/16777216;  	    ‬
+ 	    	        //    int voltage1 = voltage*1000;
+ 	    	        //    send_data_by_uart(voltage1);
+ 	    	            output[2]=0;
  	    	 //         send_command(STOP);
  	    	 }
 
@@ -265,13 +263,12 @@ int main(void)
 
 
 
- 	   //  int Read_con = read_byte(CONFIG3);
 
  	    //	send_data_by_uart(output[5]);
 
 
  	    	         //int Read_con = read_byte(CONFIG3);
- 	    	  	    // send_data_by_uart(Read_con);
+
 
 
    	 //   HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
@@ -345,7 +342,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64; //64
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
