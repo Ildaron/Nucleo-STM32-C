@@ -1,2 +1,2 @@
 Bias_out and BIASINV to Bias Electrode, Figure 73. 
-
+Основное использование для контакта BIASIN - это направление сигнала смещения на любые электроды в случае падения Bias_out. 
