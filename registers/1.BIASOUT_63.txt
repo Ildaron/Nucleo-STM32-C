@@ -1,2 +1,2 @@
-Bias_out and BIASINV to Bias Electrode
+Bias_out and BIASINV to Bias Electrode, Figure 73. 
 
