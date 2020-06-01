@@ -127,10 +127,9 @@ int main(void)
   	      HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&out,1,0x1000);
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
     	  return(out);
-
   	    }
 
-  	    void live_bits ()
+  	    void live_bits () 
   	    {
   	      HAL_Delay(100);
   	      HAL_GPIO_TogglePin(GPIOB, GPIO_PIN_10);
