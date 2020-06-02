@@ -166,14 +166,14 @@ int main(void)
    	   	    	 	   	 	            write_byte(0x16, 0x00);
    	   	    	 	   	 	            write_byte(0x17, 0x00);
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH2SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH5SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH6SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH7SET, 0x69); //
-  	   	    	 	    	 	     write_byte(CH8SET, 0x69); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x08); //69 9
+  	   	    	 	    	 	     write_byte(CH2SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH5SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH6SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH7SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH8SET, 0x09); //
 
   	   	    	 	    	 	  //   uint8_t MISC1 = 0x15;
   	   	    	 	    	 	 //    write_byte(MISC1, 0x20);
@@ -188,27 +188,34 @@ int main(void)
 
   	   	    	 	    	 //	      send_command(RDATAC);
   	   	    	 	    	 	    //  delay_us(150);
-  	   	    	 	    	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
-  	   	    	 	                                 int Read_con = read_byte(CH1SET);
+  	   	    	 	    //	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
+  	   	    	 	                                 int Read_con = read_byte(test);
   	   	    	 	     	   	 	    	  	     send_data_by_uart(Read_con);
 
 
 
-
+  	   	    	 	     	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
 
   	   	    	 	     	   	 	    	  	     //HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
 
+                                HAL_Delay(1000);
 
-  	   	    	 	 	        send_command(START);
-  	   	    	 	 	        HAL_Delay(1);
+                                HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_SET);
+                      //          send_command(START);
+
+                        //        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+                           //     send_command(START);
+  	   	    	 	 	        send_command(RDATAC);
+
+  	   	    	 	 	     //   send_command(RDATAC);
   	   	    	 	 	    //   HAL_SPI_Transmit(&hspi3, (uint8_t*)&START,1, 0x1000);
-  	   	    	 	 	       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+  	   	    	 	 	 //      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
   	   	    	 	 	      //  delay_us(50);
   	   	    	 	 	      //  send_command(RDATAC);
-  	   	    	 	 	        HAL_SPI_Transmit(&hspi3, (uint8_t*)&RDATAC,1, 0x1000);
+  	   	    	 	 	   //    HAL_SPI_Transmit(&hspi3, (uint8_t*)&RDATAC,1, 0x1000);
   	   	    	 	      //	 delay_us(5);
-  	   	    	 	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+  	   	    	 	      //     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
 
  	      while (1)
@@ -219,16 +226,15 @@ int main(void)
  	    	            	dataPacket = 0;
  	    	                for(int j = 0; j<3; j++){
  	    	                   // byte dataByte = SPI.transfer(0x00);
- 	    	                   // HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
- 	    	                    HAL_SPI_Receive(&hspi3, (uint8_t*)&received_Byte,1, 0x1000);
+ 	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
+ 	    	                //    HAL_SPI_Receive(&hspi3, (uint8_t*)&received_Byte,1, 0x1000);
  	    	                    dataPacket = (dataPacket<<8) | received_Byte;
  	    	                }
-
  	    	                output[i] = dataPacket;
  	    	                dataPacket = 0;
  	    	                }
 
- 	    	           HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	     //      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
  	    	     //      delay_us(200);
  	    	            send_data_by_uart(output[1]);
  	    	  //        send_data_by_uart(output[4]);
