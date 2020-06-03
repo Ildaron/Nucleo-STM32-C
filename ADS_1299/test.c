@@ -1,3 +1,4 @@
+
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
@@ -19,7 +20,7 @@ int main(void)
    int received_byte;
    uint8_t SDATAC = 0x11;
    uint8_t RESET = 0x06;
-   uint8_t WAKEUP = 0x02;
+ //  uint8_t WAKEUP = 0x02;
 
    uint8_t CONFIG1 = 0x01;
    uint8_t CONFIG2 = 0x02;
@@ -27,7 +28,7 @@ int main(void)
    uint8_t START = 0x08;
    uint8_t test = 0x00;
    uint8_t RDATAC = 0x10;
-   uint8_t STOP = 0x0a;
+  // uint8_t STOP = 0x0a;
 
 
 
@@ -127,7 +128,6 @@ int main(void)
   	      HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&out,1,0x1000);
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
     	  return(out);
-
   	    }
 
   	    void live_bits ()
@@ -149,7 +149,7 @@ int main(void)
   	   	    	 	      	            HAL_Delay(1000);
   	   	    	 	    	 	        write_byte(CONFIG1, 0x96); // 96
   	   	    	 	    	 	        //delay_us(10);
-  	   	    	 	   	 	            write_byte(CONFIG2, 0xC0);  //D1
+  	   	    	 	   	 	            write_byte(CONFIG2, 0xD3);  //D1
   	   	    	 	    	 	        //delay_us(10);
   	   	    	 	   	 	            write_byte(CONFIG3, 0xE0); // e0
 
@@ -162,7 +162,7 @@ int main(void)
    	   	    	 	   	 	            write_byte(0x12, 0x00);
    	  	    	 	   	 	            write_byte(0x13, 0x00);
    	   	    	 	   	 	            write_byte(0x14, 0x0F);
-   	   	    	 	   	 	            write_byte(0x15, 0x00);
+   	   	    	 	   	 	     //     write_byte(0x15, 0x00);
    	   	    	 	   	 	            write_byte(0x16, 0x00);
    	   	    	 	   	 	            write_byte(0x17, 0x00);
 
@@ -175,8 +175,8 @@ int main(void)
   	   	    	 	    	 	     write_byte(CH7SET, 0x09); //
   	   	    	 	    	 	     write_byte(CH8SET, 0x09); //
 
-  	   	    	 	    	 	  //   uint8_t MISC1 = 0x15;
-  	   	    	 	    	 	 //    write_byte(MISC1, 0x20);
+  	   	    	 	    	 	     uint8_t MISC1 = 0x15;
+  	   	    	 	    	 	     write_byte(MISC1, 0x20);
 
 
   	   	    	 	    	// 	     write_byte(0x0D, 0x00);
@@ -189,25 +189,27 @@ int main(void)
   	   	    	 	    	 //	      send_command(RDATAC);
   	   	    	 	    	 	    //  delay_us(150);
   	   	    	 	    //	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
-  	   	    	 	                                 int Read_con = read_byte(test);
+  	   	    	 	                                 int Read_con = read_byte(CH1SET);
   	   	    	 	     	   	 	    	  	     send_data_by_uart(Read_con);
 
 
 
-  	   	    	 	     	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+  	   	    	 	     	   	 	  	HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
 
   	   	    	 	     	   	 	    	  	     //HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
 
                                 HAL_Delay(1000);
 
-                                HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_SET);
+                       //         HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_SET);
                       //          send_command(START);
 
                         //        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-                           //     send_command(START);
-  	   	    	 	 	        send_command(RDATAC);
 
+  	   	                        send_command(RDATAC);
+  	   	    	 	 	        HAL_Delay(1);
+  	   	                        send_command(START);
+  	   	    	 	 	        HAL_Delay(1);
   	   	    	 	 	     //   send_command(RDATAC);
   	   	    	 	 	    //   HAL_SPI_Transmit(&hspi3, (uint8_t*)&START,1, 0x1000);
   	   	    	 	 	 //      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
@@ -216,11 +218,26 @@ int main(void)
   	   	    	 	 	   //    HAL_SPI_Transmit(&hspi3, (uint8_t*)&RDATAC,1, 0x1000);
   	   	    	 	      //	 delay_us(5);
   	   	    	 	      //     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-
+int zad = 8;
+HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_SET);
 
  	      while (1)
+
   {
- 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET){
+ 	    	     //        HAL_Delay(500);
+ 	    	 	  //
+ 	    	 	  //       HAL_Delay(500);
+ 	    	 	  //       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_RESET);
+
+
+ 	        	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
+                       {
+	            zad = 5;
+                       }
+
+ 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET ){ // && zad==5
+ 	    		        //HAL_Delay(1);
+ 	    		        zad=0;
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
  	    	            for(int i = 0; i<9; i++){
  	    	            	dataPacket = 0;
@@ -234,7 +251,7 @@ int main(void)
  	    	                dataPacket = 0;
  	    	                }
 
- 	    	     //      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	     //       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
  	    	     //      delay_us(200);
  	    	            send_data_by_uart(output[1]);
  	    	  //        send_data_by_uart(output[4]);
@@ -270,6 +287,8 @@ int main(void)
   * @brief System Clock Configuration
   * @retval None
   */
+
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
@@ -327,7 +346,7 @@ static void MX_SPI3_Init(void)
   hspi3.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi3.Init.CLKPhase = SPI_PHASE_2EDGE;
   hspi3.Init.NSS = SPI_NSS_SOFT;
-  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;
+  hspi3.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_16;
   hspi3.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi3.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi3.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -473,4 +492,3 @@ void assert_failed(uint8_t *file, uint32_t line)
 #endif /* USE_FULL_ASSERT */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-//
