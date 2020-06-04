@@ -1,6 +1,6 @@
 https://e2e.ti.com/support/data-converters/f/73/p/775288/2868597#2868597
 VREF = VREFP – VREFN (Note: internal reference buffer must be enabled)
-VCAP1 = AVSS + 1.2 V
+//VCAP1 = AVSS + 1.2 V
 VCAP2 = (AVDD + AVSS) / 2
 VCAP3 = AVDD + 1.9 V
 VCAP4 = (VREFP + VREFN) / 2
