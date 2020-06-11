@@ -8,4 +8,3 @@ ODR 3:0 -  Output data rate and power mode selection. Default value: 0000
    OUT_Z (2Ch - 2Dh) - Z-axis output register.
 5. OUTS1 (5Fh) - Output flags on axis for interrupt SM1 management.
 6. MASK2_B (79h)- Axis and sign mask (swap) for SM2 motion-detection operation
-7. 
