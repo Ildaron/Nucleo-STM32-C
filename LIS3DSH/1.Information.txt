@@ -3,4 +3,6 @@ Registers
 ODR 3:0 -  Output data rate and power mode selection. Default value: 0000 
 2.REG5_ADDR (адрес 0x24)-spi настройки
 3. STATUS (27h) - ZYXDA,  X, Y, and Z-axis new data available. Default value: 0 (0: a new set of data is not yet available; 1: a new set of data is available)
-
+4. OUT_X (28h - 29h) - X-axis output register.
+   OUT_Y (2Ah - 2Bh) - Y-axis output register.
+   OUT_Z (2Ch - 2Dh) - Z-axis output register.
