@@ -1,4 +1,5 @@
 Registers
 1.REG4_ADDR (адрес 0x20)-0x07: включим биты всех осей, тем самым скажем датчику о том, чтобы он нам считывал данные всех трёх осей (x,y,z)
+ODR 3:0 -  Output data rate and power mode selection. Default value: 0000 
 2.REG5_ADDR (адрес 0x24)-spi настройки
-3.
+
