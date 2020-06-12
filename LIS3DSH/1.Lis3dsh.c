@@ -66,20 +66,20 @@ int main(void)
   uint8_t status_readed;
   uint8_t status_comp;
 
-  uint8_t OUT_X2= 0x28;
-  uint8_t OUT_X1= 0x29;
+  uint8_t OUT_X1= 0x28;
+  uint8_t OUT_X2= 0x29;
   uint8_t OUT_X1_data;
   uint8_t OUT_X2_data;
   uint16_t OUT_X_result;
 
-  uint8_t OUT_Y1= 0x28;
-  uint8_t OUT_Y2= 0x29;
+  uint8_t OUT_Y1= 0x2A;
+  uint8_t OUT_Y2= 0x2B;
   uint8_t OUT_Y1_data;
   uint8_t OUT_Y2_data;
   uint16_t OUT_Y_result;
 
-  uint8_t OUT_Z1= 0x28;
-  uint8_t OUT_Z2= 0x29;
+  uint8_t OUT_Z1= 0x2C;
+  uint8_t OUT_Z2= 0x2D;
   uint8_t OUT_Z1_data;
   uint8_t OUT_Z2_data;
   uint16_t OUT_Z_result;
@@ -96,22 +96,37 @@ int main(void)
 	  HAL_I2C_Mem_Read(&hi2c3, adress_read, status, 1, (uint8_t*)&status_readed, 1, 1000);
 	  status_comp=status_readed|status_check;
 	  if (status_comp == status_ready) {
-	  }
+
 
 	      HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X1, 1, (uint8_t*)&OUT_X1_data, 1, 1000);
 	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X2, 1, (uint8_t*)&OUT_X2_data, 1, 1000);
+		  OUT_X_result=OUT_X2_data;
+		  OUT_X_result=(OUT_X_result<<8)|OUT_X1_data;
 
-		  OUT_X_result=OUT_X1_data;
-		  OUT_X_result=(OUT_X_result<<8)|OUT_X2_data;
-	      send_data_by_uart (OUT_X_result);
+	              HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_Y1, 1, (uint8_t*)&OUT_Y1_data, 1, 1000);
+	     	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_Y2, 1, (uint8_t*)&OUT_Y2_data, 1, 1000);
+	     		  OUT_Y_result=OUT_Y2_data;
+	     		  OUT_Y_result=(OUT_Y_result<<8)|OUT_Y1_data;
+
+	     	              HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_Z1, 1, (uint8_t*)&OUT_Z1_data, 1, 1000);
+	     	    	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_Z2, 1, (uint8_t*)&OUT_Z2_data, 1, 1000);
+	     	    		  OUT_Z_result=OUT_Z2_data;
+	     	    		  OUT_Z_result=(OUT_Z_result<<8)|OUT_Z1_data;
+
+	 send_data_by_uart (OUT_X_result);
+//	 send_data_by_uart (OUT_Y_result);
+	// send_data_by_uart (OUT_Z_result);
+
+	//  HAL_I2C_Master_Receive(&hi2c3,adress_read,&buf_xyz,6, 0x1000);
+	//	HAL_I2C_Master_Transmit(&hi2c1,dev_adr,(uint8_t*)data,1,200);
 
 	 }
+	   HAL_Delay(100);
+  }
 
 
-//	 HAL_I2C_Master_Transmit(&hi2c1,dev_adr,(uint8_t*)data,1,200);
 
 
-      HAL_Delay(10);
   }
 
 
