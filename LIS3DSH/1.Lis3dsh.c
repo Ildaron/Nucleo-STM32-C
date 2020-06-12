@@ -1,60 +1,10 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file           : main.c
-  * @brief          : Main program body
-  ******************************************************************************
-  * @attention
-  *
-  * <h2><center>&copy; Copyright (c) 2020 STMicroelectronics.
-  * All rights reserved.</center></h2>
-  *
-  * This software component is licensed by ST under BSD 3-Clause license,
-  * the "License"; You may not use this file except in compliance with the
-  * License. You may obtain a copy of the License at:
-  *                        opensource.org/licenses/BSD-3-Clause
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-
-/* USER CODE END Includes */
-
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN PTD */
-
-/* USER CODE END PTD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
 I2C_HandleTypeDef hi2c3;
-
 SPI_HandleTypeDef hspi2;
 SPI_HandleTypeDef hspi3;
-
 UART_HandleTypeDef huart4;
 UART_HandleTypeDef huart5;
-
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_UART5_Init(void);
@@ -62,60 +12,18 @@ static void MX_SPI3_Init(void);
 static void MX_SPI2_Init(void);
 static void MX_UART4_Init(void);
 static void MX_I2C3_Init(void);
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/**
-  * @brief  The application entry point.
-  * @retval int
-  */
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
-
-  /* USER CODE END 1 */
-  
-
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
   SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_UART5_Init();
   MX_SPI3_Init();
   MX_SPI2_Init();
   MX_UART4_Init();
   MX_I2C3_Init();
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-
-
   void send_data_by_uart (received_byte)
   	  	  {
-  	  	  // step 1 - convert dataset
   	  	  char buffer[16];
   	  	  char buffer1[16];
   	  	  sprintf(buffer1, "%d\n", received_byte);
@@ -129,62 +37,97 @@ int main(void)
   	  	                          }
   	  	          }
   	             a=0;
-  	          // step 2 - send by uart UART
-  	  	    //   HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
+  	  	   }
 
-  	  	  }
-
-
-
-  uint8_t  buf;
-  uint8_t adress = 0x27;
-
-  uint8_t CTRL_REG1 = 0x21;
+  uint16_t  buf_x;
+  uint16_t  buf_y;
+  uint16_t  buf_z;
+  uint8_t adress_write = 0x3C;
+  uint8_t adress_read = 0x3D;
   uint8_t CTRL_REG4 = 0x20;
+  uint8_t CTRL_REG5 = 0x24;
+
+  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
+  uint8_t data=0x0F;
+
+  uint8_t data_reg4 = 0xF7;
+  HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG4, 1, (uint8_t*)&data_reg4, 1, 1000);
+  uint8_t data_reg5 = 0x00;
+  HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG5,1,  (uint8_t*)&data_reg5, 1,  1000);
+
+ // HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG1, data, 2, 2, 1000);
+  uint8_t test = 0x00;
+
+  uint8_t buf_xyz [6];
+  uint8_t status = 0x27;
+  uint8_t status_check= 0xF7;
+  uint8_t status_ready= 0xFF;
+  uint8_t status_readed;
+  uint8_t status_comp;
+
+  uint8_t OUT_X2= 0x28;
+  uint8_t OUT_X1= 0x29;
+  uint8_t OUT_X1_data;
+  uint8_t OUT_X2_data;
+  uint16_t OUT_X_result;
+
+  uint8_t OUT_Y1= 0x28;
+  uint8_t OUT_Y2= 0x29;
+  uint8_t OUT_Y1_data;
+  uint8_t OUT_Y2_data;
+  uint16_t OUT_Y_result;
+
+  uint8_t OUT_Z1= 0x28;
+  uint8_t OUT_Z2= 0x29;
+  uint8_t OUT_Z1_data;
+  uint8_t OUT_Z2_data;
+  uint16_t OUT_Z_result;
+
+
+
+
+
+  int check = 11;
 
   while (1)
   {
-	      HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
-	 	  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_SET);
-	 	  HAL_Delay(300);
-	 	  HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_SET);
-	 	  HAL_GPIO_WritePin(GPIOA, LED2_Pin, GPIO_PIN_RESET);
-	       HAL_Delay(300);
-	 	  /* USER CODE BEGIN 3 */
-	//       send_data_by_uart (1234);
 
-	       uint8_t data=0xC0;
-	HAL_I2C_Master_Transmit(&hi2c3,CTRL_REG1,(uint8_t*)&data,1,200);
-           uint8_t data1=0x01;
-    HAL_I2C_Master_Transmit(&hi2c3,CTRL_REG4,(uint8_t*)&data1,1,200);
+	  HAL_I2C_Mem_Read(&hi2c3, adress_read, status, 1, (uint8_t*)&status_readed, 1, 1000);
+	  status_comp=status_readed|status_check;
+	  if (status_comp == status_ready) {
+	  }
+
+	      HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X1, 1, (uint8_t*)&OUT_X1_data, 1, 1000);
+	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X2, 1, (uint8_t*)&OUT_X2_data, 1, 1000);
+
+		  OUT_X_result=OUT_X1_data;
+		  OUT_X_result=(OUT_X_result<<8)|OUT_X2_data;
+	      send_data_by_uart (OUT_X_result);
+
+	 }
 
 
+//	 HAL_I2C_Master_Transmit(&hi2c1,dev_adr,(uint8_t*)data,1,200);
 
-    HAL_I2C_Master_Receive(&hi2c3, adress, (uint8_t*)&buf, 1, 1000);
-    send_data_by_uart (204);
-    send_data_by_uart (buf);//
-///	 HAL_I2C_Master_Transmit(&hi2c1,dev_adr,(uint8_t*)data,1,200);
-    /* USER CODE BEGIN 3 */
- //     send_data_by_uart (buf);
+
+      HAL_Delay(10);
   }
-  /* USER CODE END 3 */
-}
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
+
+
+
+
+
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
-  /** Configure the main internal regulator output voltage 
-  */
   __HAL_RCC_PWR_CLK_ENABLE();
   __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
+
   RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
   RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -193,8 +136,7 @@ void SystemClock_Config(void)
   {
     Error_Handler();
   }
-  /** Initializes the CPU, AHB and APB busses clocks 
-  */
+
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
@@ -208,21 +150,11 @@ void SystemClock_Config(void)
   }
 }
 
-/**
-  * @brief I2C3 Initialization Function
-  * @param None
-  * @retval None
-  */
+
 static void MX_I2C3_Init(void)
 {
 
-  /* USER CODE BEGIN I2C3_Init 0 */
 
-  /* USER CODE END I2C3_Init 0 */
-
-  /* USER CODE BEGIN I2C3_Init 1 */
-
-  /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
   hi2c3.Init.ClockSpeed = 100000;
   hi2c3.Init.DutyCycle = I2C_DUTYCYCLE_2;
@@ -236,28 +168,14 @@ static void MX_I2C3_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN I2C3_Init 2 */
 
-  /* USER CODE END I2C3_Init 2 */
 
 }
 
-/**
-  * @brief SPI2 Initialization Function
-  * @param None
-  * @retval None
-  */
+
 static void MX_SPI2_Init(void)
 {
 
-  /* USER CODE BEGIN SPI2_Init 0 */
-
-  /* USER CODE END SPI2_Init 0 */
-
-  /* USER CODE BEGIN SPI2_Init 1 */
-
-  /* USER CODE END SPI2_Init 1 */
-  /* SPI2 parameter configuration*/
   hspi2.Instance = SPI2;
   hspi2.Init.Mode = SPI_MODE_MASTER;
   hspi2.Init.Direction = SPI_DIRECTION_2LINES;
@@ -274,28 +192,14 @@ static void MX_SPI2_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN SPI2_Init 2 */
 
-  /* USER CODE END SPI2_Init 2 */
 
 }
 
-/**
-  * @brief SPI3 Initialization Function
-  * @param None
-  * @retval None
-  */
 static void MX_SPI3_Init(void)
 {
 
-  /* USER CODE BEGIN SPI3_Init 0 */
 
-  /* USER CODE END SPI3_Init 0 */
-
-  /* USER CODE BEGIN SPI3_Init 1 */
-
-  /* USER CODE END SPI3_Init 1 */
-  /* SPI3 parameter configuration*/
   hspi3.Instance = SPI3;
   hspi3.Init.Mode = SPI_MODE_MASTER;
   hspi3.Init.Direction = SPI_DIRECTION_2LINES;
