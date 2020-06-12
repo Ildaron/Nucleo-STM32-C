@@ -24,6 +24,12 @@ int main(void)
   MX_I2C3_Init();
   void send_data_by_uart (received_byte)
   	  	  {
+	  if (received_byte=="X"||received_byte=="Y"||received_byte=="Z")
+	  {
+		  HAL_UART_Transmit(&huart5, received_byte, 1, 1000);
+	  }
+	  else
+	  {
   	  	  char buffer[16];
   	  	  char buffer1[16];
   	  	  sprintf(buffer1, "%d\n", received_byte);
@@ -38,6 +44,10 @@ int main(void)
   	  	          }
   	             a=0;
   	  	   }
+  	  	  }
+
+
+
 
   uint16_t  buf_x;
   uint16_t  buf_y;
@@ -85,9 +95,6 @@ int main(void)
   uint16_t OUT_Z_result;
 
 
-
-
-
   int check = 11;
 
   while (1)
@@ -96,7 +103,6 @@ int main(void)
 	  HAL_I2C_Mem_Read(&hi2c3, adress_read, status, 1, (uint8_t*)&status_readed, 1, 1000);
 	  status_comp=status_readed|status_check;
 	  if (status_comp == status_ready) {
-
 
 	      HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X1, 1, (uint8_t*)&OUT_X1_data, 1, 1000);
 	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X2, 1, (uint8_t*)&OUT_X2_data, 1, 1000);
@@ -113,26 +119,22 @@ int main(void)
 	     	    		  OUT_Z_result=OUT_Z2_data;
 	     	    		  OUT_Z_result=(OUT_Z_result<<8)|OUT_Z1_data;
 
+	 send_data_by_uart ("X");
 	 send_data_by_uart (OUT_X_result);
-//	 send_data_by_uart (OUT_Y_result);
-	// send_data_by_uart (OUT_Z_result);
+	 send_data_by_uart ("Y");
+	 send_data_by_uart (OUT_Y_result);
+	 send_data_by_uart ("Z");
+	 send_data_by_uart (OUT_Z_result);
 
 	//  HAL_I2C_Master_Receive(&hi2c3,adress_read,&buf_xyz,6, 0x1000);
 	//	HAL_I2C_Master_Transmit(&hi2c1,dev_adr,(uint8_t*)data,1,200);
 
 	 }
-	   HAL_Delay(100);
+	   HAL_Delay(1000);
   }
 
 
-
-
   }
-
-
-
-
-
 
 
 
