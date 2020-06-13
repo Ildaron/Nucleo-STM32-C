@@ -61,9 +61,9 @@ int main(void)
   HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
   uint8_t data=0x0F;
 
-  uint8_t data_reg4 = 0xF7;
+  uint8_t data_reg4 = 0x87;
   HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG4, 1, (uint8_t*)&data_reg4, 1, 1000);
-  uint8_t data_reg5 = 0x00;
+  uint8_t data_reg5 = 0x20;
   HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG5,1,  (uint8_t*)&data_reg5, 1,  1000);
 
  // HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG1, data, 2, 2, 1000);
