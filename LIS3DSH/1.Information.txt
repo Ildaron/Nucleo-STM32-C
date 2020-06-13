@@ -14,3 +14,5 @@ ODR 3:0 -  Output data rate and power mode selection. Default value: 0000
    OUT_Z (2Ch - 2Dh) - Z-axis output register.
 5. OUTS1 (5Fh) - Output flags on axis for interrupt SM1 management.
 6. MASK2_B (79h)- Axis and sign mask (swap) for SM2 motion-detection operation
+
+Библиотека MPU6050 по умолчанию настраивает датчик на диапазон ±8g (возможные значения ±2g, 4g, 8g и 16g). для 16 разрядного АЦП датчика это значения от -215 до 215 , поэтому возможные значения на графике ±215/16*8 (-16384 до 16384).
