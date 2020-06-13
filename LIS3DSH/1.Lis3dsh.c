@@ -98,7 +98,8 @@ int main(void)
   int check = 11;
 
   while (1)
-  {
+  {       HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
+
 
 	  HAL_I2C_Mem_Read(&hi2c3, adress_read, status, 1, (uint8_t*)&status_readed, 1, 1000);
 	  status_comp=status_readed|status_check;
