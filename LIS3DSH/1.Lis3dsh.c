@@ -1,4 +1,3 @@
-
 #include "main.h"
 I2C_HandleTypeDef hi2c3;
 SPI_HandleTypeDef hspi2;
@@ -47,7 +46,7 @@ int main(void)
   	  	  }
 
 
-
+//
 
   uint16_t  buf_x;
   uint16_t  buf_y;
@@ -61,7 +60,7 @@ int main(void)
   HAL_GPIO_WritePin(GPIOA, LED1_Pin, GPIO_PIN_RESET);
   uint8_t data=0x0F;
 
-  uint8_t data_reg4 = 0x87;
+  uint8_t data_reg4 = 0x87;//87
   HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG4, 1, (uint8_t*)&data_reg4, 1, 1000);
   uint8_t data_reg5 = 0x20;
   HAL_I2C_Mem_Write(&hi2c3, adress_write, CTRL_REG5,1,  (uint8_t*)&data_reg5, 1,  1000);
@@ -76,11 +75,11 @@ int main(void)
   uint8_t status_readed;
   uint8_t status_comp;
 
-  uint8_t OUT_X1= 0x28;
-  uint8_t OUT_X2= 0x29;
-  uint8_t OUT_X1_data;
-  uint8_t OUT_X2_data;
-  uint16_t OUT_X_result;
+  int8_t OUT_X1= 0x28;
+  int8_t OUT_X2= 0x29;
+  int8_t OUT_X1_data;
+  int8_t OUT_X2_data;
+  int16_t OUT_X_result;
 
   uint8_t OUT_Y1= 0x2A;
   uint8_t OUT_Y2= 0x2B;
@@ -98,15 +97,14 @@ int main(void)
   int check = 11;
 
   while (1)
-  {       HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
-
+  {   HAL_GPIO_TogglePin(GPIOA, LED2_Pin);
 
 	  HAL_I2C_Mem_Read(&hi2c3, adress_read, status, 1, (uint8_t*)&status_readed, 1, 1000);
 	  status_comp=status_readed|status_check;
 	  if (status_comp == status_ready) {
 
-	      HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X1, 1, (uint8_t*)&OUT_X1_data, 1, 1000);
-	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X2, 1, (uint8_t*)&OUT_X2_data, 1, 1000);
+	      HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X1, 1, (int8_t*)&OUT_X1_data, 1, 1000);
+	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_X2, 1, (int8_t*)&OUT_X2_data, 1, 1000);
 		  OUT_X_result=OUT_X2_data;
 		  OUT_X_result=(OUT_X_result<<8)|OUT_X1_data;
 
@@ -119,7 +117,7 @@ int main(void)
 	     	    	  	  HAL_I2C_Mem_Read(&hi2c3, adress_read, OUT_Z2, 1, (uint8_t*)&OUT_Z2_data, 1, 1000);
 	     	    		  OUT_Z_result=OUT_Z2_data;
 	     	    		  OUT_Z_result=(OUT_Z_result<<8)|OUT_Z1_data;
-
+//
 	 send_data_by_uart ("X");
 	 send_data_by_uart (OUT_X_result);
 	 send_data_by_uart ("Y");
