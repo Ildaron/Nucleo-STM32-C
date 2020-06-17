@@ -16,7 +16,7 @@ int main(void)
   MX_UART5_Init();
   MX_SPI3_Init();
 
-   int received_byte;
+
    uint8_t SDATAC = 0x11;
    uint8_t RESET = 0x06;
  //  uint8_t WAKEUP = 0x02;
@@ -42,10 +42,10 @@ int main(void)
 
 
 
-   int8_t received_Byte;
-   long output[9];
-   long dataPacket;
-
+   uint8_t received_Byte;
+   uint16_t output[5];
+   uint16_t dataPacket;
+   uint16_t dataPacket_2bytes;
 
 
 //#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
@@ -94,7 +94,6 @@ int main(void)
   	             a=0;
   	          // step 2 - send by uart UART
   	  	    //   HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
-
   	  	  }
 
 
@@ -152,30 +151,30 @@ int main(void)
   	   	    	 	    	 	        //delay_us(10);
   	   	    	 	   	 	            write_byte(CONFIG3, 0xE0); // e0
 
-  	   	    	 	   	 	            write_byte(0x04, 0x00);
-  	   	    	 	   	 	            write_byte(0x0D, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0E, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0F, 0x00);
-  	   	    	 	   	 	            write_byte(0x10, 0x00);
-  	   	    	 	   	 	            write_byte(0x11, 0x00);
-   	   	    	 	   	 	            write_byte(0x12, 0x00);
-   	  	    	 	   	 	            write_byte(0x13, 0x00);
-   	   	    	 	   	 	            write_byte(0x14, 0x0F);
+  	   	    	 	   	 	 //           write_byte(0x04, 0x00);
+  	   	    	 	   	 	 //           write_byte(0x0D, 0xFF);
+  	   	    	 	   	 	//            write_byte(0x0E, 0xFF);
+  	   	    	 	   	 	//            write_byte(0x0F, 0x00);
+  	   	    	 	   	 	//            write_byte(0x10, 0x00);
+  	   	    	 	   	 	//            write_byte(0x11, 0x00);
+   	   	    	 	   	 	//            write_byte(0x12, 0x00);
+   	  	    	 	   	 	//            write_byte(0x13, 0x00);
+   	   	    	 	   	 	//            write_byte(0x14, 0x0F);
    	   	    	 	   	 	     //     write_byte(0x15, 0x00);
-   	   	    	 	   	 	            write_byte(0x16, 0x00);
-   	   	    	 	   	 	            write_byte(0x17, 0x00);
+   	   	    	 	   	 	//            write_byte(0x16, 0x00);
+   	   	    	 	   	 	//            write_byte(0x17, 0x00);
 
   	   	    	 	    	  	     write_byte(CH1SET, 0x00); //69 9
   	   	    	 	    	 	     write_byte(CH2SET, 0x09); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH5SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH6SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH7SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH8SET, 0x09); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
+  	   	    	 	    	 	//     write_byte(CH5SET, 0x09); //
+  	   	    	 	    	 	//     write_byte(CH6SET, 0x09); //
+  	   	    	 	    	 	//     write_byte(CH7SET, 0x09); //
+  	   	    	 	    	 //	     write_byte(CH8SET, 0x09); //
 
   	   	    	 	    	 	     uint8_t MISC1 = 0x15;
-  	   	    	 	    	 	     write_byte(MISC1, 0x20);
+  	   	    	 	    	 	     write_byte(MISC1, 0x00);
 
 
   	   	    	 	    	// 	     write_byte(0x0D, 0x00);
@@ -224,37 +223,33 @@ HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11,GPIO_PIN_SET);
 
   {
  	    	     //        HAL_Delay(500);
- 	    	 	  //
  	    	 	  //       HAL_Delay(500);
  	    	 	  //       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_RESET);
-
 
  	        	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
                        {
 	            zad = 5;
                        }
-
  	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET && zad==5){ //
- 	    		        //HAL_Delay(1);
  	    		        zad=0;
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
  	    	            for(int i = 0; i<5; i++){
  	    	            	dataPacket = 0;
  	    	                for(int j = 0; j<3; j++){
  	    	                   // byte dataByte = SPI.transfer(0x00);
- 	    	                    HAL_SPI_TransmitReceive(&hspi3,(int8_t*)&test,(int8_t*)&received_Byte,1,0x1000);
+ 	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
  	    	                //    HAL_SPI_Receive(&hspi3, (int8_t*)&received_Byte,1, 0x1000);
- 	    	                    dataPacket = (dataPacket<<8) | received_Byte;
+ 	    	                    dataPacket_2bytes = (dataPacket<<8) | received_Byte;
  	    	                }
- 	    	                output[i] = dataPacket;
- 	    	                dataPacket = 0;
+ 	    	                output[i] = dataPacket_2bytes;
+ 	    	                dataPacket_2bytes = 0;
  	    	                }
 
- 	    	     //       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	    //        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
  	    	     //      delay_us(200);
  	    	            send_data_by_uart(output[1]);
  	    	  //        send_data_by_uart(output[4]);
- 	    	           HAL_Delay(10);
+ 	    	            HAL_Delay(10);
 
                      //   float voltage = (output[1]*3.3)/16777216;	    	      ‬
  	    	        //    int voltage1 = voltage*1000;
