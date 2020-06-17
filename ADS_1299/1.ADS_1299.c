@@ -160,23 +160,23 @@ int main(void)
   	   	    	 	    	 	        //delay_us(10);
   	   	    	 	   	 	            write_byte(CONFIG3, 0xE0); // e0
 
-  	   	    	 	   	 	//            write_byte(0x04, 0x00);
-  	   	    	 	   	 	//            write_byte(0x0D, 0xFF);
-  	   	    	 	   	 	//            write_byte(0x0E, 0xFF);
-  	   	    	 	   	 	 //           write_byte(0x0F, 0x00);
-  	   	    	 	   	 	//            write_byte(0x10, 0x00);
-  	   	    	 	   	 	//            write_byte(0x11, 0x00);
-   	   	    	 	   	 	//            write_byte(0x12, 0x00);
-   	  	    	 	   	 	//            write_byte(0x13, 0x00);
-   	   	    	 	   	 	//            write_byte(0x14, 0x0F);
-   	   	    	 	   	 	     //     write_byte(0x15, 0x00);
-   	   	    	 	   	 	//            write_byte(0x16, 0x00);
-   	   	    	 	   	 	//            write_byte(0x17, 0x00);
+  	   	    	 	   	 	            write_byte(0x04, 0x00);
+  	   	    	 	   	 	            write_byte(0x0D, 0xFF);
+  	   	    	 	   	 	            write_byte(0x0E, 0xFF);
+  	   	    	 	   	 	            write_byte(0x0F, 0x00);
+  	   	    	 	   	 	            write_byte(0x10, 0x00);
+  	   	    	 	   	 	            write_byte(0x11, 0x00);
+   	   	    	 	   	 	            write_byte(0x12, 0x00);
+   	  	    	 	   	 	            write_byte(0x13, 0x00);
+   	   	    	 	   	 	            write_byte(0x14, 0x0F);
+   	   	    	 	   	 	            write_byte(0x15, 0x00);
+   	   	    	 	   	 	            write_byte(0x16, 0x00);
+   	   	    	 	   	 	            write_byte(0x17, 0x00);
 
   	   	    	 	    	  	     write_byte(CH1SET, 0x00); //69 9
   	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x08); //
   	   	    	 	    	 	 //    write_byte(CH5SET, 0x09); //
   	   	    	 	    	 	//     write_byte(CH6SET, 0x09); //
   	   	    	 	    	 	//     write_byte(CH7SET, 0x09); //
