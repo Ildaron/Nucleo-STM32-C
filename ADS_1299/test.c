@@ -1,4 +1,3 @@
-
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
@@ -44,10 +43,21 @@ int main(void)
 
 
    uint8_t received_Byte;
-   long output[9];
-   long dataPacket;
+   uint32_t  output[5]= {0};
+   uint32_t dataPacket;
+   uint32_t dataPacket_3bytes;
 
 
+   uint32_t data_test = 0x7FFFFF;
+   uint32_t data_check = 0xFFFFFF;
+
+   uint32_t result;
+   uint32_t result_before;
+   uint32_t noise_massive [100]={0};
+   uint32_t final_noise_massive [100]={0};
+   uint32_t summa_noise;
+   int zad = 8;
+   int i_count = 0;
 
 //#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
 //#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
@@ -65,15 +75,11 @@ int main(void)
   //	DWT_Init();
 
 
-
   void send_command(uint8_t cmd)
   	    {
   	  		    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	  	  //   	delay_us(20);
   	  	        HAL_SPI_Transmit(&hspi3, (uint8_t*)&cmd,1, 0x1000);
-  	  	   //     delay_us(20);
   	  	        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	  	    //    delay_us(3);
   	  	  }
 
 
@@ -93,9 +99,6 @@ int main(void)
   	  	                          }
   	  	          }
   	             a=0;
-  	          // step 2 - send by uart UART
-  	  	    //   HAL_UART_Transmit(&huart5, "amigos", 6, 1000);  //"amigo\r\n\0"
-
   	  	  }
 
 
@@ -112,8 +115,6 @@ int main(void)
     	// delay_us(2);
     	 HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
   	    }
-
-
 
   	    uint8_t read_byte(uint8_t reg_addr)
   	    {
@@ -137,58 +138,101 @@ int main(void)
   	      HAL_Delay(100);
   	    }
 
+       int measure_noise()
+       {   summa_noise=0;
 
+           int zad = 8;
+    	   uint32_t noise_massive [100]={0};
+  	       write_byte(CH1SET, 0x01);
+    	   for (int count = 0; count<100; count++){
 
+    	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
+    	                         {
+    	  	              zad = 5;
+    	                         }
+    	   	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET && zad==5){
+
+    	   	    		        zad=0;
+    	   	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
+    	   	    	            for(int i = 0; i<5; i++){
+    	   	    	            	dataPacket = 0;
+    	   	    	                for(int j = 0; j<3; j++){
+    	   	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,&received_Byte,1,0x1000);
+    	   	    	                    dataPacket = (dataPacket<<8)|received_Byte;
+    	   	    	                }
+    	   	    	                output[i] = dataPacket;
+    	   	    	                dataPacket = 0;
+    	   	    	            }
+    	   	    	             result_before = output[1]|data_test;
+    	   	    	             if (result_before==data_check)
+    	  		                 {
+    	   	    	            	noise_massive[count] = 16777214-output[1];
+    	   	    	            //	send_data_by_uart(noise_massive[count]);
+    	  		                 }
+    	  		                  else
+    	  		                  {
+    	  		                	noise_massive[count] = output[1];
+    	  		               // 	send_data_by_uart(noise_massive[count]);
+    	  		                  }
+    	   	    	            if (i_count==100)
+    	   	    	            {
+    	   	    	            i_count=0;
+    	   	    	            for ( int ir_count = 0; ir_count < 100; ir_count++) {
+    	   	    	           	          summa_noise += final_noise_massive[ir_count];
+    	   	    	          	   }
+    	   	    	               summa_noise=summa_noise/100;
+    	   	    	               send_data_by_uart (summa_noise);
+
+    	   	    	            }
+    	   	    	      //     send_data_by_uart (i_count);
+    	   	    	      //     send_data_by_uart (noise_massive[count]);
+    	   	    	           final_noise_massive[i_count]=noise_massive[count];
+    	   	    	           i_count++;
+              }
+              }
+       }
 
   	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-  	//   delay_us(100);
 
-  	                                send_command(SDATAC);
-  	   	    	 	  	            HAL_SPI_Transmit(&hspi3, (uint8_t*)&RESET, 1, 0x1000);
-
+  	                                    send_command(SDATAC);
+  	   	    	 	  	                HAL_SPI_Transmit(&hspi3, (uint8_t*)&RESET, 1, 0x1000);
   	   	    	 	      	            HAL_Delay(1000);
   	   	    	 	    	 	        write_byte(CONFIG1, 0x96); // 96
-  	   	    	 	    	 	        //delay_us(10);
-  	   	    	 	   	 	            write_byte(CONFIG2, 0xD3);  //D1
-  	   	    	 	    	 	        //delay_us(10);
-  	   	    	 	   	 	            write_byte(CONFIG3, 0xE0); // e0
+  	   	    	 	   	 	            write_byte(CONFIG2, 0xD4);  //D3
+  	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // e0
 
   	   	    	 	   	 	            write_byte(0x04, 0x00);
-  	   	    	 	   	 	            write_byte(0x0D, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0E, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0F, 0x00);
-  	   	    	 	   	 	            write_byte(0x10, 0x00);
-  	   	    	 	   	 	            write_byte(0x11, 0x00);
-   	   	    	 	   	 	            write_byte(0x12, 0x00);
-   	  	    	 	   	 	            write_byte(0x13, 0x00);
-   	   	    	 	   	 	            write_byte(0x14, 0x0F);
-   	   	    	 	   	 	     //     write_byte(0x15, 0x00);
-   	   	    	 	   	 	            write_byte(0x16, 0x00);
-   	   	    	 	   	 	            write_byte(0x17, 0x00);
+  	   	    	 	   	 	            write_byte(0x0D, 0x0F); //  BIAS_SENSP: Bias Drive Positive Derivation Register
+  	   	    	 	   	 	            write_byte(0x0E, 0x0F); //  BIAS_SENSN: Bias Drive Negative Derivation Register
+  	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
+  	   	    	 	   	 	            write_byte(0x10, 0x00);  // LOFF_SENSN: Negative Signal Lead-Off Detection Register
+  	   	    	 	   	 	            write_byte(0x11, 0x00);  // LOFF_FLIP: Lead-Off Flip Register
+   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register	   	    	 	   	 	               	   	    	 	   	 	           
+   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register  	  	    	 	   	 	             	  	    	 	   		            
+   	   	    	 	   	 	            write_byte(0x14, 0x0F);  //gpio   	   	    	 	   	 	               	   	    	 	   	 	              	   	    	 	   	 	             	   	    	 	   	 	            
+   	   	    	 	   	 	            write_byte(0x15, 0x20);  // MISC1
+   	   	    	 	   	 	            
+   	   	    	 	   	 	            
+   	   	    	 	   	 	        //    write_byte(0x16, 0x00); // RESERVED 
+   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4 
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x08); //69 9
-  	   	    	 	    	 	     write_byte(CH2SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH5SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH6SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH7SET, 0x09); //
-  	   	    	 	    	 	     write_byte(CH8SET, 0x09); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x40); // 40
+  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
+  	   	    	 	    	 	   //    write_byte(CH5SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH6SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH7SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH8SET, 0x09); //
 
-  	   	    	 	    	 	     uint8_t MISC1 = 0x15;
-  	   	    	 	    	 	     write_byte(MISC1, 0x20);
-
-
-  	   	    	 	    	// 	     write_byte(0x0D, 0x00);
-
-  	   	    	 	    	// 	     write_byte(0x0E, 0x00);
-
+  	   	    	 	    	       // 	 write_byte(0x0D, 0x00);
+  	   	    	 	    	       // 	 write_byte(0x0E, 0x00);
 
   	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
-  	   	    	 	    	 //	      send_command(RDATAC);
-  	   	    	 	    	 	    //  delay_us(150);
-  	   	    	 	    //	    	  HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
+  	   	    	 	    	        // send_command(RDATAC);
+  	   	    	 	    	 	    // delay_us(150);
+  	   	    	 	                // HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
   	   	    	 	                                 int Read_con = read_byte(CH1SET);
   	   	    	 	     	   	 	    	  	     send_data_by_uart(Read_con);
 
@@ -218,16 +262,14 @@ int main(void)
   	   	    	 	 	   //    HAL_SPI_Transmit(&hspi3, (uint8_t*)&RDATAC,1, 0x1000);
   	   	    	 	      //	 delay_us(5);
   	   	    	 	      //     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-int zad = 8;
-HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_SET);
+
+HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11,GPIO_PIN_SET);
+
+int only_1_times=0;
 
  	      while (1)
-
   {
- 	    	     //        HAL_Delay(500);
- 	    	 	  //
- 	    	 	  //       HAL_Delay(500);
- 	    	 	  //       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_RESET);
+ 	    		 //measure_noise();  // for check noise
 
 
  	        	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
@@ -235,51 +277,42 @@ HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_SET);
 	            zad = 5;
                        }
 
- 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET ){ // && zad==5
+ 	    	if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_RESET && zad==5){ //
  	    		        //HAL_Delay(1);
  	    		        zad=0;
  	    	            HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
- 	    	            for(int i = 0; i<9; i++){
+ 	    	            for(int i = 0; i<5; i++){
  	    	            	dataPacket = 0;
  	    	                for(int j = 0; j<3; j++){
  	    	                   // byte dataByte = SPI.transfer(0x00);
- 	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,(uint8_t*)&received_Byte,1,0x1000);
- 	    	                //    HAL_SPI_Receive(&hspi3, (uint8_t*)&received_Byte,1, 0x1000);
- 	    	                    dataPacket = (dataPacket<<8) | received_Byte;
+ 	    	                    HAL_SPI_TransmitReceive(&hspi3,(uint8_t*)&test,&received_Byte,1,0x1000);
+ 	    	                  //  HAL_SPI_Receive(&hspi3, (гint8_t*)&received_Byte,1, 0x1000);
+ 	    	                    dataPacket = (dataPacket<<8)|received_Byte;
  	    	                }
  	    	                output[i] = dataPacket;
  	    	                dataPacket = 0;
- 	    	                }
+ 	    	            }
 
  	    	     //       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
- 	    	     //      delay_us(200);
- 	    	            send_data_by_uart(output[1]);
- 	    	  //        send_data_by_uart(output[4]);
+
+ 	    	         //  if  ((data_test ||　output[1])== data_check)
+ 	    	            result_before = output[1]|data_test;
+ 	    	            if (result_before==data_check)
+		               {
+		            	   result = (16777214-output[1]-864);//*((2*4.5)/16777215);
+		                   send_data_by_uart(result);
+ 	    	           }
+		                  else
+		                  { //LSB = (2 x VREF) / Gain / (2 ^ 24 - 1)
+		            	   result = output[1]-864;//*((2*4.5)/16777215);
+		                   send_data_by_uart(result);
+		                  }
 
 
-                     //   float voltage = (output[1]*3.3)/16777216;	    	      ‬
- 	    	        //    int voltage1 = voltage*1000;
- 	    	       //     send_data_by_uart(voltage1);
  	    	 }
 
-
-
-
-
- 	    	//delay_us(200);
-
-
-
- 	   //  int Read_con = read_byte(CONFIG3);
-
- 	    //	send_data_by_uart(output[5]);
-
-
-
-
-   	 //   HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
-
-
+ 	//    	send_data_by_uart(measure_noise());
+ 	    //	HAL_Delay(10);
    }
 }
 
