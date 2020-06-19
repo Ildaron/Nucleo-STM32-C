@@ -53,12 +53,15 @@ int main(void)
 
    uint32_t result;
    uint32_t result_before;
+   int average_result_massiv[10]={0};
+   int average_result;
+
    uint32_t noise_massive [100]={0};
    uint32_t final_noise_massive [100]={0};
    uint32_t summa_noise;
    int zad = 8;
    int i_count = 0;
-
+   int average_count= 0;
 //#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
 //#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
 //  	  void DWT_Init(void)
@@ -182,8 +185,7 @@ int main(void)
     	   	    	          	   }
     	   	    	               summa_noise=summa_noise/100;
     	   	    	               send_data_by_uart (summa_noise);
-
-    	   	    	            }
+    	   	    	               }
     	   	    	      //     send_data_by_uart (i_count);
     	   	    	      //     send_data_by_uart (noise_massive[count]);
     	   	    	           final_noise_massive[i_count]=noise_massive[count];
@@ -207,14 +209,14 @@ int main(void)
   	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
   	   	    	 	   	 	            write_byte(0x10, 0x00);  // LOFF_SENSN: Negative Signal Lead-Off Detection Register
   	   	    	 	   	 	            write_byte(0x11, 0x00);  // LOFF_FLIP: Lead-Off Flip Register
-   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register	   	    	 	   	 	               	   	    	 	   	 	           
-   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register  	  	    	 	   	 	             	  	    	 	   		            
-   	   	    	 	   	 	            write_byte(0x14, 0x0F);  //gpio   	   	    	 	   	 	               	   	    	 	   	 	              	   	    	 	   	 	             	   	    	 	   	 	            
+   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register
+   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register
+   	   	    	 	   	 	            write_byte(0x14, 0x0F);  //gpio
    	   	    	 	   	 	            write_byte(0x15, 0x20);  // MISC1
-   	   	    	 	   	 	            
-   	   	    	 	   	 	            
-   	   	    	 	   	 	        //    write_byte(0x16, 0x00); // RESERVED 
-   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4 
+
+
+   	   	    	 	   	 	        //    write_byte(0x16, 0x00); // RESERVED
+   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4
 
   	   	    	 	    	  	     write_byte(CH1SET, 0x40); // 40
   	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
@@ -300,15 +302,30 @@ int only_1_times=0;
  	    	            if (result_before==data_check)
 		               {
 		            	   result = (16777214-output[1]-864);//*((2*4.5)/16777215);
-		                   send_data_by_uart(result);
+		                 //  send_data_by_uart(result);
  	    	           }
 		                  else
 		                  { //LSB = (2 x VREF) / Gain / (2 ^ 24 - 1)
 		            	   result = output[1]-864;//*((2*4.5)/16777215);
-		                   send_data_by_uart(result);
 		                  }
+ 	    	            //  send_data_by_uart(result);
+						  average_result_massiv[average_count]=result;
+						  average_count++;
 
+						  average_result=0;
 
+						      if (average_count==10)
+							  {
+							  average_count=0;
+							  for (int j=0; j<10;j++)
+							  {
+							  average_result = average_result_massiv[j]+average_result;
+							  }
+							  average_result=average_result/10;
+							  send_data_by_uart(average_result);
+								  }
+
+		//	 send_data_by_uart(result);
  	    	 }
 
  	//    	send_data_by_uart(measure_noise());
