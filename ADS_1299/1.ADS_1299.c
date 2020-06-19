@@ -1,4 +1,3 @@
-
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
@@ -203,33 +202,31 @@ int main(void)
   	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // e0
 
   	   	    	 	   	 	            write_byte(0x04, 0x00);
-  	   	    	 	   	 	            write_byte(0x0D, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0E, 0xFF);
-  	   	    	 	   	 	            write_byte(0x0F, 0x00);
-  	   	    	 	   	 	            write_byte(0x10, 0x00);
-  	   	    	 	   	 	            write_byte(0x11, 0x00);
-   	   	    	 	   	 	            write_byte(0x12, 0x00);
-   	  	    	 	   	 	            write_byte(0x13, 0x00);
-   	   	    	 	   	 	            write_byte(0x14, 0x0F);
-   	   	    	 	   	 	            write_byte(0x15, 0x00);
-   	   	    	 	   	 	            write_byte(0x16, 0x00);
-   	   	    	 	   	 	            write_byte(0x17, 0x00);
+  	   	    	 	   	 	            write_byte(0x0D, 0x0F); //  BIAS_SENSP: Bias Drive Positive Derivation Register
+  	   	    	 	   	 	            write_byte(0x0E, 0x0F); //  BIAS_SENSN: Bias Drive Negative Derivation Register
+  	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
+  	   	    	 	   	 	            write_byte(0x10, 0x00);  // LOFF_SENSN: Negative Signal Lead-Off Detection Register
+  	   	    	 	   	 	            write_byte(0x11, 0x00);  // LOFF_FLIP: Lead-Off Flip Register
+   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register	   	    	 	   	 	               	   	    	 	   	 	           
+   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register  	  	    	 	   	 	             	  	    	 	   		            
+   	   	    	 	   	 	            write_byte(0x14, 0x0F);  //gpio   	   	    	 	   	 	               	   	    	 	   	 	              	   	    	 	   	 	             	   	    	 	   	 	            
+   	   	    	 	   	 	            write_byte(0x15, 0x20);  // MISC1
+   	   	    	 	   	 	            
+   	   	    	 	   	 	            
+   	   	    	 	   	 	        //    write_byte(0x16, 0x00); // RESERVED 
+   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4 
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x01); //08
-  	   	    	 	    	 	     write_byte(CH2SET, 0x08); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x08); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x08); //
-  	   	    	 	    	 	 //    write_byte(CH5SET, 0x09); //
-  	   	    	 	    	 	 //    write_byte(CH6SET, 0x09); //
-  	   	    	 	    	 	 //    write_byte(CH7SET, 0x09); //
-  	   	    	 	    	 	 //    write_byte(CH8SET, 0x09); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x40); // 40
+  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
+  	   	    	 	    	 	   //    write_byte(CH5SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH6SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH7SET, 0x09); //
+  	   	    	 	    	 	   //    write_byte(CH8SET, 0x09); //
 
-  	   	    	 	    	 	     uint8_t MISC1 = 0x15;
-  	   	    	 	    	 	     write_byte(MISC1, 0x20);
-
-
-  	   	    	 	    	// 	     write_byte(0x0D, 0x00);
-  	   	    	 	    	// 	     write_byte(0x0E, 0x00);
+  	   	    	 	    	       // 	 write_byte(0x0D, 0x00);
+  	   	    	 	    	       // 	 write_byte(0x0E, 0x00);
 
   	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
@@ -268,14 +265,11 @@ int main(void)
 
 HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11,GPIO_PIN_SET);
 
+int only_1_times=0;
 
  	      while (1)
   {
- 	    	     //        HAL_Delay(500);
- 	    	 	  //
- 	    	 	  //       HAL_Delay(500);
- 	    	 	  //       HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10,GPIO_PIN_RESET);
-
+ 	    		 //measure_noise();  // for check noise
 
 
  	        	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
@@ -305,19 +299,20 @@ HAL_GPIO_WritePin(GPIOB, GPIO_PIN_11,GPIO_PIN_SET);
  	    	            result_before = output[1]|data_test;
  	    	            if (result_before==data_check)
 		               {
-		            	   result = (16777214-output[1]);//*((2*4.5)/16777215);
-		          //         send_data_by_uart(result);
+		            	   result = (16777214-output[1]-864);//*((2*4.5)/16777215);
+		                   send_data_by_uart(result);
  	    	           }
 		                  else
 		                  { //LSB = (2 x VREF) / Gain / (2 ^ 24 - 1)
-		            	   result = output[1];//*((2*4.5)/16777215);
-		            //       send_data_by_uart(result);
+		            	   result = output[1]-864;//*((2*4.5)/16777215);
+		                   send_data_by_uart(result);
 		                  }
 
 
  	    	 }
- 	    	measure_noise();
+
  	//    	send_data_by_uart(measure_noise());
+ 	    //	HAL_Delay(10);
    }
 }
 
