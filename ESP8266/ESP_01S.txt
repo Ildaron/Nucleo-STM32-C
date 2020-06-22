@@ -1,1 +1,22 @@
 https://xn--90aeniddllys.xn--p1ai/modul-esp-01esp8266-ili-wifi-dlya-nachinayushhix/
+используем putty
+
+1. Данные с ПК на ESP_01
+AT  
+AT+GMR 
+AT+CWMODE=1   (Wi-Fi выберем режим модуля: доступны следующие режимы: 1 — STA, 2 — AP, 3 — Station+AP)
+AT+CWLAP  (Смотрим список точек доступа командой)
+AT+CWJAP="name","password" (Подключаемся к нашей точке)
+AT+CIFSR (смотрим какой ip дляя putty черех telnet)
+AT+CIOBAUD=9600 (зададим скорость)
+AT+RST (перезагрузим модуль)
+AT+CIPMODE=0 (запуск TCP-сервера, 0 — not data mode, сервер может отправлять данные клиенту и может принимать данные от клиента, 1 — data mode, сервер не может отправлять данные клиенту, но может принимать данные от клиента)
+AT+CIPMUX=1 (Устанавливаем возможность множественных соединений)
+AT+CIPSERVER=1,80 (mode,port) (Запускаем сервер на порту 80)
+AT+CIPCLOSE=id Закрыть активное соединение соединения AT+CIPCLOSE без параметров.
+
+2. Данные с ESP_01 на ПК
+Для режима Single connection отправка идет так :AT+CIPSEND=length 
+AT+CIPSEND=0,5
+Hello
+Для режима Multiple connection отправка идет так: AT+CIPSEND=id,length.
