@@ -1,3 +1,4 @@
 1. Impedance
-- LOFF_SENSP: Positive Signal Lead-Off Detection Register (address = 0Fh)-set to 1
-- BIAS_SENSP and BIAS_SENSN - set to 0
+1.1 step. LOFF_SENSP: Positive Signal Lead-Off Detection Register (address = 0x0F)-set to 1
+1.2 step. BIAS_SENSP and BIAS_SENSN - set to 0 (address = 0x0D,0x0E)
+1.3 step. LOFF: Lead-Off Control Register (address = 0x04) - set current, 24 mkA - 0x0C
