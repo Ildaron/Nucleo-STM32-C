@@ -211,10 +211,10 @@ int main(void)
   	   	    	 	   	 	            write_byte(CONFIG2, 0xD4);  //D3
   	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // EC
 
-  	   	    	 	   	 	            write_byte(0x04, 0x04);
+  	   	    	 	   	 	            write_byte(0x04, 0x04);  // not all
 
-  	   	    	 	   	 	            write_byte(0x0D, 0x0F); // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
-  	   	    	 	   	 	            write_byte(0x0E, 0x00); // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
+  	   	    	 	   	 	            write_byte(0x0D, 0x08); // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
+  	   	    	 	   	 	            write_byte(0x0E, 0x08); // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
 
   	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
 
@@ -229,10 +229,10 @@ int main(void)
    	   	    	 	   	 	        //  write_byte(0x16, 0x00); // RESERVED
    	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x60); // 40
-  	   	    	 	    	 	     write_byte(CH2SET, 0x60); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x60); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x60); //
+  	   	    	 	    	  	     write_byte(CH1SET, 0x00); // 60
+  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x08); //
   	   	    	 	    	 	   //    write_byte(CH5SET, 0x09); //
   	   	    	 	    	 	   //    write_byte(CH6SET, 0x09); //
   	   	    	 	    	 	   //    write_byte(CH7SET, 0x09); //
@@ -305,15 +305,15 @@ int only_1_times=0;
  	    	          // HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
  	    	         //  if  ((data_test ||　output[1])== data_check)
- 	    	            result_before = output[1]|data_test;
+ 	    	            result_before = output[4]|data_test;
  	    	            if (result_before==data_check)
 		               {
-		            	   result = (16777214-output[1])-861; // -864//*((2*4.5)/16777215);
+		            	   result = (16777214-output[4])-861; // -864//*((2*4.5)/16777215);
 		                 //  send_data_by_uart(result);
  	    	           }
 		                  else
 		                  { //LSB = (2 x VREF) // Gain / (2 ^ 24 - 1)
-		            	   result = output[1]-861; //-864//*((2*4.5)/16777215);
+		            	   result = output[4]-861; //-864//*((2*4.5)/16777215);
 		                  }
  	    	            //  send_data_by_uart(result);
 						  average_result_massiv[average_count]=result;
