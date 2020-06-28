@@ -1,5 +1,5 @@
-SDO -GND
-
+SDO - GND
+CS - 3.3V
 
   uint8_t adress_write = 0x3C;
   uint8_t adress_read = 0x3D;
