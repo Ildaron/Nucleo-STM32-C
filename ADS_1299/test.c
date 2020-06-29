@@ -53,12 +53,15 @@ int main(void)
 
    uint32_t result;
    uint32_t result_before;
+   int average_result_massiv[10]={0};
+   int average_result;
+
    uint32_t noise_massive [100]={0};
    uint32_t final_noise_massive [100]={0};
    uint32_t summa_noise;
    int zad = 8;
    int i_count = 0;
-
+   int average_count= 0;
 //#define DWT_CONTROL *(volatile unsigned long *)0xE0001000
 //#define SCB_DEMCR *(volatile unsigned long *)0xE000EDFC
 //  	  void DWT_Init(void)
@@ -107,12 +110,8 @@ int main(void)
   	     HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
   	     uint8_t adress = 0x40|reg_addr;
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&adress, 1, 0x1000);
-  	  //   delay_us(5);
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&test, 1, 0x1000);
-  	 //    delay_us(5);
   	     HAL_SPI_Transmit(&hspi3, (uint8_t*)&val_hex, 1, 0x1000);
-  	//     delay_us(50);
-    	// delay_us(2);
     	 HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
   	    }
 
@@ -121,7 +120,6 @@ int main(void)
   	      uint8_t out;
 
   	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-  	   //   delay_us(20);
   	      uint8_t adress = 0x20 | reg_addr ;  //
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*) &adress, 1 ,0x1000);
   	      HAL_SPI_Transmit(&hspi3, (uint8_t*)&test, 1, 0x1000);
@@ -139,8 +137,8 @@ int main(void)
   	    }
 
        int measure_noise()
-       {   summa_noise=0;
-
+       {
+    	   summa_noise=0;
            int zad = 8;
     	   uint32_t noise_massive [100]={0};
   	       write_byte(CH1SET, 0x01);
@@ -182,8 +180,7 @@ int main(void)
     	   	    	          	   }
     	   	    	               summa_noise=summa_noise/100;
     	   	    	               send_data_by_uart (summa_noise);
-
-    	   	    	            }
+    	   	    	               }
     	   	    	      //     send_data_by_uart (i_count);
     	   	    	      //     send_data_by_uart (noise_massive[count]);
     	   	    	           final_noise_massive[i_count]=noise_massive[count];
@@ -192,6 +189,19 @@ int main(void)
               }
        }
 
+
+       int measure_impedance()
+	   {
+    	 write_byte(CH1SET, 0x00);
+	 	 write_byte(0x0D, 0x00);    // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
+	 	 write_byte(0x0E, 0x00);    // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
+	 	 write_byte(0x0F, 0x01);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
+       }
+
+       int measure_standart()
+       {
+
+       }
   	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
   	                                    send_command(SDATAC);
@@ -199,27 +209,30 @@ int main(void)
   	   	    	 	      	            HAL_Delay(1000);
   	   	    	 	    	 	        write_byte(CONFIG1, 0x96); // 96
   	   	    	 	   	 	            write_byte(CONFIG2, 0xD4);  //D3
-  	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // e0
+  	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // EC
 
-  	   	    	 	   	 	            write_byte(0x04, 0x00);
-  	   	    	 	   	 	            write_byte(0x0D, 0x0F); //  BIAS_SENSP: Bias Drive Positive Derivation Register
-  	   	    	 	   	 	            write_byte(0x0E, 0x0F); //  BIAS_SENSN: Bias Drive Negative Derivation Register
+  	   	    	 	   	 	            write_byte(0x04, 0x08);  // not all
+
+  	   	    	 	   	 	            write_byte(0x0D, 0x00); // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
+  	   	    	 	   	 	            write_byte(0x0E, 0x01); // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
+
   	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
+
   	   	    	 	   	 	            write_byte(0x10, 0x00);  // LOFF_SENSN: Negative Signal Lead-Off Detection Register
   	   	    	 	   	 	            write_byte(0x11, 0x00);  // LOFF_FLIP: Lead-Off Flip Register
-   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register	   	    	 	   	 	               	   	    	 	   	 	           
-   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register  	  	    	 	   	 	             	  	    	 	   		            
-   	   	    	 	   	 	            write_byte(0x14, 0x0F);  //gpio   	   	    	 	   	 	               	   	    	 	   	 	              	   	    	 	   	 	             	   	    	 	   	 	            
+   	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register
+   	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register
+   	   	    	 	   	 	            write_byte(0x14, 0x80);  //gpio  OF
    	   	    	 	   	 	            write_byte(0x15, 0x20);  // MISC1
-   	   	    	 	   	 	            
-   	   	    	 	   	 	            
-   	   	    	 	   	 	        //    write_byte(0x16, 0x00); // RESERVED 
-   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4 
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x40); // 40
-  	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
-  	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
+
+   	   	    	 	   	 	        //  write_byte(0x16, 0x00); // RESERVED
+   	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4
+
+  	   	    	 	    	  	     write_byte(CH1SET, 0x58); // 60
+  	   	    	 	    	 	     write_byte(CH2SET, 0x08); //
+  	   	    	 	    	 	     write_byte(CH3SET, 0x08); //
+  	   	    	 	    	 	     write_byte(CH4SET, 0x08); //
   	   	    	 	    	 	   //    write_byte(CH5SET, 0x09); //
   	   	    	 	    	 	   //    write_byte(CH6SET, 0x09); //
   	   	    	 	    	 	   //    write_byte(CH7SET, 0x09); //
@@ -228,31 +241,28 @@ int main(void)
   	   	    	 	    	       // 	 write_byte(0x0D, 0x00);
   	   	    	 	    	       // 	 write_byte(0x0E, 0x00);
 
-  	   	    	 	    	 	      HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+  	   	    	 	    	 	//    HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
   	   	    	 	    	        // send_command(RDATAC);
   	   	    	 	    	 	    // delay_us(150);
   	   	    	 	                // HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
-  	   	    	 	                                 int Read_con = read_byte(CH1SET);
-  	   	    	 	     	   	 	    	  	     send_data_by_uart(Read_con);
-
-
-
-  	   	    	 	     	   	 	  	HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
-
+  	   	    	 	    	 	   send_command(SDATAC);
+  	   	    	 	    	 	   uint8_t read_reg = read_byte(CH1SET);
+ 	    	 	     	   	 	   send_data_by_uart(read_reg);
+  	   	    	 	     	   	   HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
   	   	    	 	     	   	 	    	  	     //HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_RESET);
 
-                                HAL_Delay(1000);
+                                   HAL_Delay(1000);
 
                        //         HAL_GPIO_WritePin(GPIOD, START_Pin, GPIO_PIN_SET);
                       //          send_command(START);
 
                         //        HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_RESET);
-
   	   	                        send_command(RDATAC);
   	   	    	 	 	        HAL_Delay(1);
   	   	                        send_command(START);
+
   	   	    	 	 	        HAL_Delay(1);
   	   	    	 	 	     //   send_command(RDATAC);
   	   	    	 	 	    //   HAL_SPI_Transmit(&hspi3, (uint8_t*)&START,1, 0x1000);
@@ -270,7 +280,6 @@ int only_1_times=0;
  	      while (1)
   {
  	    		 //measure_noise();  // for check noise
-
 
  	        	   if (HAL_GPIO_ReadPin(DRDY_GPIO_Port, DRDY_Pin) == GPIO_PIN_SET)
                        {
@@ -293,22 +302,37 @@ int only_1_times=0;
  	    	                dataPacket = 0;
  	    	            }
 
- 	    	     //       HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
+ 	    	          // HAL_GPIO_WritePin(GPIOD, CS_Pin, GPIO_PIN_SET);
 
  	    	         //  if  ((data_test ||　output[1])== data_check)
  	    	            result_before = output[1]|data_test;
  	    	            if (result_before==data_check)
 		               {
-		            	   result = (16777214-output[1]-864);//*((2*4.5)/16777215);
-		                   send_data_by_uart(result);
+		            	   result = (16777214-output[1])-861; // -864//*((2*4.5)/16777215);
+		                 //  send_data_by_uart(result);
  	    	           }
 		                  else
-		                  { //LSB = (2 x VREF) / Gain / (2 ^ 24 - 1)
-		            	   result = output[1]-864;//*((2*4.5)/16777215);
-		                   send_data_by_uart(result);
+		                  { //LSB = (2 x VREF) // Gain / (2 ^ 24 - 1)
+		            	   result = output[1]-861; //-864//*((2*4.5)/16777215);
 		                  }
+ 	    	            //  send_data_by_uart(result);
+						  average_result_massiv[average_count]=result;
+						  average_count++;
 
+						  average_result=0;
 
+						      if (average_count==5)
+							  {
+							  average_count=0;
+							  for (int j=0; j<5;j++)
+							  {
+							  average_result = average_result_massiv[j]+average_result;
+							  }
+							  average_result=average_result/5;
+							  send_data_by_uart(average_result);
+								  }
+
+		//	 send_data_by_uart(result);
  	    	 }
 
  	//    	send_data_by_uart(measure_noise());
