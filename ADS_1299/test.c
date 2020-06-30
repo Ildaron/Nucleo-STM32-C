@@ -211,10 +211,10 @@ int main(void)
   	   	    	 	   	 	            write_byte(CONFIG2, 0xD4);  //D3
   	   	    	 	   	 	            write_byte(CONFIG3, 0xEC); // EC
 
-  	   	    	 	   	 	            write_byte(0x04, 0x08);  // not all
+  	   	    	 	   	 	            write_byte(0x04, 0x04);  // not all
 
-  	   	    	 	   	 	            write_byte(0x0D, 0x00); // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
-  	   	    	 	   	 	            write_byte(0x0E, 0x01); // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
+  	   	    	 	   	 	            write_byte(0x0D, 0x08); // 0F  BIAS_SENSP: Bias Drive Positive Derivation Register
+  	   	    	 	   	 	            write_byte(0x0E, 0x08); // 0F  BIAS_SENSN: Bias Drive Negative Derivation Register
 
   	   	    	 	   	 	            write_byte(0x0F, 0x00);  // LOFF_SENSP: Positive Signal Lead-Off Detection Register
 
@@ -229,7 +229,7 @@ int main(void)
    	   	    	 	   	 	        //  write_byte(0x16, 0x00); // RESERVED
    	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x58); // 60
+  	   	    	 	    	  	     write_byte(CH1SET, 0x68); // 60
   	   	    	 	    	 	     write_byte(CH2SET, 0x08); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x08); //
   	   	    	 	    	 	     write_byte(CH4SET, 0x08); //
@@ -313,26 +313,26 @@ int only_1_times=0;
  	    	           }
 		                  else
 		                  { //LSB = (2 x VREF) // Gain / (2 ^ 24 - 1)
-		            	   result = output[1]-861; //-864//*((2*4.5)/16777215);
+		            	   result = output[1]-861; //-864//*((2*4.5)/16777215);//
 		                  }
- 	    	            //  send_data_by_uart(result);
+ 	    	              send_data_by_uart(result);
 						  average_result_massiv[average_count]=result;
 						  average_count++;
 
 						  average_result=0;
+//
+//						      if (average_count==20)
+//							  {
+//							  average_count=0;
+//							  for (int j=0; j<20;j++)
+///							  {
+//							  average_result = average_result_massiv[j]+average_result;
+//							  }
+//							  average_result=average_result/20;
+////							  send_data_by_uart(average_result);
+//								  }
 
-						      if (average_count==5)
-							  {
-							  average_count=0;
-							  for (int j=0; j<5;j++)
-							  {
-							  average_result = average_result_massiv[j]+average_result;
-							  }
-							  average_result=average_result/5;
-							  send_data_by_uart(average_result);
-								  }
-
-		//	 send_data_by_uart(result);
+			// send_data_by_uart(result);
  	    	 }
 
  	//    	send_data_by_uart(measure_noise());
