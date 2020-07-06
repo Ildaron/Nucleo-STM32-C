@@ -1,0 +1,48 @@
+1. to “board_controller.cpp”
+add 
+#include "ironeeg.h"
+case BoardIds::ironeeg_board:
+board = std::shared_ptr<Board> (new ironeeg (params));
+break;
+
+2. to “brainflow_constants.h”
+add
+ironeeg_board = 13
+
+3. I create 2 documents exactly as and in folder mit “mit” only change name to my board.
+ironeeg.cpp
+ironeeg.h
+
+4 CMakeLists link for my files (ironeeg.cpp, ironeeg.h
+)
+${CMAKE_HOME_DIRECTORY}/src/board_controller/iron/ironeeg.cpp /
+${CMAKE_HOME_DIRECTORY}/src/board_controller/iron/inc 
+
+5. to board_shim.py I add 
+ironeeg_board = 13
+
+6. BoardIds .txt
+ironeeg_board (13)
+
+7.  brainflow_boards.json
+"13" : {
+			"name": "ironeeg",
+			"sampling_rate": 500,
+			"package_num_channel" : 0,
+			"timestamp_channel" : 19,
+			"num_rows" : 20,
+			"eeg_channels" : [2, 3, 4, 5, 6, 7, 8, 9],
+			"accel_channels" : [10, 11, 12],
+			"gyro_channels" : [13, 14, 15],
+			"eda_channels" : [16],
+			"ppg_channels" : [18],
+			"temperature_channels" : [17],
+			"other_channels": [1]
+		}
+
+8. Cwith program Cmake I generated project 
+
+9. upgrade 
+cd python-package 
+python -m pip install -U .
+
