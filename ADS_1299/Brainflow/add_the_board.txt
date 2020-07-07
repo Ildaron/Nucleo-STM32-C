@@ -9,7 +9,7 @@ break;
 add
 ironeeg_board = 13
 
-3. I create 2 documents exactly as and in folder mit “mit” only change name to my board.
+3. I create 2 documents exactly as and __ in folder  “ironeeg” only change name to my board.
 ironeeg.cpp
 ironeeg.h
 
