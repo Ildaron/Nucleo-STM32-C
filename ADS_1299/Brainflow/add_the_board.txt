@@ -40,7 +40,11 @@ ironeeg_board (13)
 			"other_channels": [1]
 		}
 
-8. Cwith program Cmake I generated project 
+8. with program Cmake I generated project 
+
+9.to Cnakelist.txt
+target_include_directories 
+${CMAKE_HOME_DIRECTORY}/src/board_controller/ironeeg/inc
 
 9. upgrade 
 cd python-package 
