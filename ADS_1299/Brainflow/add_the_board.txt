@@ -50,3 +50,6 @@ ${CMAKE_HOME_DIRECTORY}/src/board_controller/ironeeg/inc
 cd python-package 
 python -m pip install -U .
 
+10.install core
+cd build64
+cmake --build . --target install --config Release 
