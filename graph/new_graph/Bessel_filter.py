@@ -3,7 +3,7 @@
 from scipy import signal
 import matplotlib.pyplot as plt
 import numpy as np
-5
+
 b, a = signal.butter(4, 100, 'low', analog=True)
 w, h = signal.freqs(b, a)
 plt.semilogx(w, 20 * np.log10(np.abs(h)), color='silver', ls='dashed')
