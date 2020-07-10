@@ -1,15 +1,3 @@
-import numpy as np
-from scipy.signal import butter, lfilter, freqz
-import matplotlib.pyplot as plt
-
-
-
-
-from scipy import zeros, signal, random
-import numpy
-
-
-
 import sys
 import os
 from PyQt5.QtWidgets import *
@@ -27,17 +15,19 @@ from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import time
 import threading
 
-
-import mne
-
-
 import serial
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
-ComPort = serial.Serial('COM5') 
+import numpy as np
+from scipy.signal import butter, lfilter, freqz
+import matplotlib.pyplot as plt
+
+
+
+ComPort = serial.Serial('COM7') 
 ComPort.baudrate = 9600          
 ComPort.bytesize = 8            
 ComPort.parity   = 'N'           
@@ -122,7 +112,7 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
         self.ax1.add_line(self.line1_tail)
         self.ax1.add_line(self.line1_head)
         self.ax1.set_xlim(0, self.xlim - 1)
-        self.ax1.set_ylim(0, 1000000)
+        self.ax1.set_ylim(-1000, 2000) # ildar
         FigureCanvas.__init__(self, self.fig)
         TimedAnimation.__init__(self, self.fig, interval = 50, blit = True)
         return
@@ -180,6 +170,10 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
 # send data to your GUI in a thread-safe way.
 # Believe me, if you don't do this right, things
 # go very very wrong..
+class Communicate(QObject):
+    data_signal = pyqtSignal(float)
+
+''' End Class '''
 
 
 
@@ -194,60 +188,52 @@ def butter_lowpass_filter(data, cutoff, fs, order=5):
     y = lfilter(b, a, data)
     return y
 
+# Filter requirements.
+order = 2
+fs = 30.0       # sample rate, Hz
+cutoff = 10  # desired cutoff frequency of the filter, Hz
+# Get the filter coefficients so we can check its frequency response.
+b, a = butter_lowpass(cutoff, fs, order)
 
-order = 6
-fs = 30.0
-T = 5.0 
-cutoff = 1
-class Communicate(QObject):
-    data_signal = pyqtSignal(float)
 
-''' End Class '''
+#data=np.zeros((1, 150))
 def dataSendLoop(addData_callbackFunc):
     # Setup the signal-slot mechanism.
     mySrc = Communicate()
     mySrc.data_signal.connect(addData_callbackFunc)
 
-    # Simulate some data
-    n = np.linspace(0, 499, 500)
-    y = 50 + 25*(np.sin(n / 8.3)) + 10*(np.sin(n / 7.5)) - 5*(np.sin(n / 1.5))
-    i = 0
-
+    ar=0
+    data=np.array([])
+    check=11
     while(True):
-      #  if(i > 499):
-      #  i = 0
-      #  time.sleep(0.1)
-        a=0
-        at = np.array([])
-        #at=np.delete(at, 0)
-        for a in range (0,150,1):
-      #  print (a)
-         voltage = ComPort.readline()
-         try:
-          voltage=int(voltage)
-      #   print (voltage)
-          at=np.append (at,voltage)
+              
 
-         except ValueError:
-          voltage=0 
-         #ys.append(voltage)
+        voltage = ComPort.readline()
         
-        b, a = butter_lowpass(cutoff, fs, order)
-        w, h = freqz(b, a, worN=8000)
-        n = int(T * fs) # total number of samples
-        t = np.linspace(0, T, n, endpoint=False)
-        y = butter_lowpass_filter(at, cutoff, fs, order)
-        print ("ok")
-        print (y)
-        p=0
-        for yt in y:
-         s=1
-         p=p+1
-         if p>40:
-          mySrc.data_signal.emit(yt) # <- Here you emit a signal!
-        
-        
-    
+        try:
+         voltage=int(voltage)
+            
+        except ValueError:
+         voltage=0 
+
+
+        data=np.append(data, voltage, axis=None)
+        #mySrc.data_signal.emit(data[a])
+      #  print (len(data))
+        if (len(data)==251):                  
+         y = butter_lowpass_filter(data, cutoff, fs, order)
+         ar=0
+         data=np.array([])
+         check=22
+        #else:
+      #   check=11
+         
+        #data=np.append(data, voltage, axis=None)
+        if check==22: 
+         mySrc.data_signal.emit(y[ar]) 
+         ar=ar+1
+         print (ar)
+
 if __name__== '__main__':
     app = QApplication(sys.argv)
     QApplication.setStyle(QStyleFactory.create('Plastique'))
