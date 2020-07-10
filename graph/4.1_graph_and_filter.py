@@ -24,6 +24,10 @@ from scipy.signal import butter, lfilter, freqz
 import matplotlib.pyplot as plt
 from scipy import signal
 
+from scipy.signal import cheby1, freqz  # Чебышева 
+
+
+
 ComPort = serial.Serial('COM7') 
 ComPort.baudrate = 9600          
 ComPort.bytesize = 8            
@@ -176,6 +180,10 @@ def butter_lowpass_filter(data):
     y = lfilter(b, a, data)
     return y
 
+#b, a = cheby1(order, Apass, wn)  # Чебышева 
+#w, h = freqz(b, a, worN=8000)
+
+#b, a = signal.bessel(1, self.cutoff_freq / nyquist, btype="low", analog=0, output="ba")  # фильтр bessel 
 
 
 #data=np.zeros((1, 150))
