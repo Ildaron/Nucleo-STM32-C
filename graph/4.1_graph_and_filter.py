@@ -14,18 +14,15 @@ from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import time
 import threading
-
 import serial
 import datetime as dt
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 import numpy as np
 
-import numpy as np
 from scipy.signal import butter, lfilter, freqz
 import matplotlib.pyplot as plt
-
-
+from scipy import signal
 
 ComPort = serial.Serial('COM7') 
 ComPort.baudrate = 9600          
@@ -37,11 +34,6 @@ fig = plt.figure()
 ax = fig.add_subplot(1, 1, 1)
 xs = []
 ys = []
-
-
-
-
-
 
 
 class CustomMainWindow(QMainWindow):
@@ -88,7 +80,7 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
         self.addedData = []
         print(matplotlib.__version__)
         # The data
-        self.xlim = 2000
+        self.xlim = 1000
         self.n = np.linspace(0, self.xlim - 1, self.xlim)
         a = []
         b = []
@@ -177,23 +169,13 @@ class Communicate(QObject):
 
 
 
-def butter_lowpass(cutoff, fs, order=5):
-    nyq = 0.5 * fs
-    normal_cutoff = cutoff / nyq
-    b, a = butter(order, normal_cutoff, btype='low', analog=False)
-    return b, a
 
-def butter_lowpass_filter(data, cutoff, fs, order=5):
-    b, a = butter_lowpass(cutoff, fs, order=order)
+
+def butter_lowpass_filter(data):    
+    b, a = butter(3, 0.05)
     y = lfilter(b, a, data)
     return y
 
-# Filter requirements.
-order = 2
-fs = 30.0       # sample rate, Hz
-cutoff = 10  # desired cutoff frequency of the filter, Hz
-# Get the filter coefficients so we can check its frequency response.
-b, a = butter_lowpass(cutoff, fs, order)
 
 
 #data=np.zeros((1, 150))
@@ -214,14 +196,15 @@ def dataSendLoop(addData_callbackFunc):
          voltage=int(voltage)
             
         except ValueError:
+         print("voltage=0 ")         
          voltage=0 
-
 
         data=np.append(data, voltage, axis=None)
         #mySrc.data_signal.emit(data[a])
       #  print (len(data))
-        if (len(data)==251):                  
-         y = butter_lowpass_filter(data, cutoff, fs, order)
+        if (len(data)==250):
+
+         y = butter_lowpass_filter(data)
          ar=0
          data=np.array([])
          check=22
@@ -230,9 +213,10 @@ def dataSendLoop(addData_callbackFunc):
          
         #data=np.append(data, voltage, axis=None)
         if check==22: 
-         mySrc.data_signal.emit(y[ar]) 
+         mySrc.data_signal.emit(y[ar])
+
          ar=ar+1
-         print (ar)
+         #print (ar)
 
 if __name__== '__main__':
     app = QApplication(sys.argv)
