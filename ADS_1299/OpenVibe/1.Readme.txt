@@ -1,24 +1,19 @@
 http://openvibe.inria.fr/tutorial-creating-a-new-driver-for-the-acquisition-server/
 \openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\contrib\plugins\server-drivers\
-
+openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\applications\platform\acquisition-server\src\drivers\generic-oscillator
 1. Драйвер должен объявить свое имя серверу сбора данных.
-
 2. Драйвер имеет дело с двумя видами данных: заголовок (the header);
                                              буфер (the buffer)
 Заголовок - это часть данных, которая не изменяется со временем. Он содержит несколько идентификаторов о проводимом эксперименте, информацию о приобретаемых каналах.
 Буфер - это часть данных, которая меняется со временем. Он содержит различные выборки для каждого канала в данный период времени, которые зависят от количества выборок на отправленный канал
-
 3. Драйвер вызывается сервером:
    - конфигурация;
    - инициализация/деинициализация;
    - получение.
 4. In the initialization stage, the driver requests readiness status from the hardware. 
-   The driver is initialized when OpenViBEAcquisitionServer::IDriver::initialize returned
-   
+   The driver is initialized when OpenViBEAcquisitionServer::IDriver::initialize returned   
 5. Цикл драйвера OpenViBEAcquisitionServer :: IDriver :: регулярно вызывается, чтобы драйвер мог поддерживать соединение с устройством живым, отбрасывая при необходимости некоторые данные.
-
 6. Этап сбора данных происходит, когда вызывается OpenViBEAcquisitionServer :: IDriver :: start . На этом этапе драйвер регулярно запрашивается для предоставления новых данных в функции OpenViBEAcquisitionServer :: IDriver :: loop .
-
 7.Чтобы драйвер был виден на сервере сбора данных, вам необходимо зарегистрировать драйвер. Это происходит следующим образом,
 
 Поместите ваши файлы .h / .cpp в папку contrib / plugins / server-drivers / your-driver-name / src / .
