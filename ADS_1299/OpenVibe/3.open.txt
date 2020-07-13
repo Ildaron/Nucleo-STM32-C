@@ -1,2 +1,2 @@
 1. Инициализация платы - boolean CDriverOpenBCI::uninitialize(void) // 
-2. Старт прием данных - boolean CDriverOpenBCI::start(void)
+2. Старт прием данных - boolean CDriverOpenBCI::start(void) //
