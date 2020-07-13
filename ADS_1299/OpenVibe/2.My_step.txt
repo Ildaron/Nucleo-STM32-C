@@ -1,0 +1,4 @@
+http://openvibe.inria.fr/tutorial-creating-a-new-driver-for-the-acquisition-server/
+1. Создаем файлы через skeleton-generator
+2. Помещаем полученные файлы в папку share and src
+3. Добавляем адреса файлов в файл - "contribAcquisitionServer.cmake".
