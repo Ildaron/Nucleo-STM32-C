@@ -1,3 +1,5 @@
+\openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\contrib\plugins\server-drivers\
+
 1. Драйвер должен объявить свое имя серверу сбора данных.
 
 2. Драйвер имеет дело с двумя видами данных: заголовок (the header);
