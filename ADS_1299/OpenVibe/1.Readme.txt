@@ -1,3 +1,4 @@
+http://openvibe.inria.fr/tutorial-creating-a-new-driver-for-the-acquisition-server/
 \openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\contrib\plugins\server-drivers\
 
 1. Драйвер должен объявить свое имя серверу сбора данных.
