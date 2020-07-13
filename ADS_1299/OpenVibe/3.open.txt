@@ -1,2 +1,3 @@
 1. Инициализация платы - boolean CDriverOpenBCI::uninitialize(void) // 
 2. Старт прием данных - boolean CDriverOpenBCI::start(void) //
+3. функция цикла считывает данные и сохраняет их в буфере - boolean CDriverOpenBCI::loop(void) 
