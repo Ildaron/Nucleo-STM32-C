@@ -1,7 +1,7 @@
 #include "main.h"
 SPI_HandleTypeDef hspi3;
 UART_HandleTypeDef huart5;
-#include <stdio.h>
+
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_UART5_Init(void);
@@ -92,7 +92,6 @@ int main(void)
   	  	  char buffer[16];
   	  	  char buffer1[16];
   	  	  sprintf(buffer1, "%d\n", received_byte);
-
   	      int a=0;
   	  	  for (a; a<strlen(buffer1); a=a+1) //
   	  	         {
@@ -106,33 +105,40 @@ int main(void)
   	  	  }
 
 
-	  void send_data_by_uart_esp32_1()
-  	  	  {
-  	  	 char buffer_esp32_1[14];
-  	  	 char buffer1_esp32_1[] = "AT+CIPSEND=0,5";
-  	     int a=0;
-  	  	 for (a; a<14; a=a+1)
-  	  	         {
-  	  		   buffer_esp32_1[0] = buffer1_esp32_1[a];
-  	  		   HAL_UART_Transmit(&huart5, buffer_esp32_1[0], 1, 1000);
-  	  	          }
-  	             a=0;
+  	void send_data_by_uart_esp1 ()
+  	  	  	  {
+  	  	  	  // step 1 - convert dataset
+  	  	  	  char buffer[16];
+  	  	  	  char buffer1[]="ildar\n";
+  	  	      int a=0;
+  	  	  	  for (a; a<strlen(buffer1); a=a+1) //
+  	  	  	         {
+  	  	  		   if (buffer1[a]!= 0)
+  	  	  		   	        	      {
+  	  	  		   buffer[0] = buffer1[a];
+  	  	  		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
+  	  	  	                          }
+  	  	  	          }
+  	  	             a=0;
+  	  	  	  }
 
-  	  	  }
 
-	  void send_data_by_uart_esp32_2 ()
-  	  	  {
-  	  	 char buffer_esp32_2[16];
-  	  	 char buffer1[16] = "hello";
-  	     int a=0;
-  	  	 for (a; a<5; a=a+1)
-  	  	         {
-  	  		   buffer_esp32_2[0] = buffer1[a];
-  	  		   HAL_UART_Transmit(&huart5, buffer_esp32_2, 1, 1000);
-  	  	          }
-  	             a=0;
-
-  	  	  }
+  	void send_data_by_uart_esp2 ()
+  	  	  	  {
+  	  	  	  // step 1 - convert dataset
+  	  	  	  char buffer[16];
+  	  	  	  char buffer1[]="ron\n";
+  	  	      int a=0;
+  	  	  	  for (a; a<strlen(buffer1); a=a+1) //
+  	  	  	         {
+  	  	  		   if (buffer1[a]!= 0)
+  	  	  		   	        	      {
+  	  	  		   buffer[0] = buffer1[a];
+  	  	  		   HAL_UART_Transmit(&huart5, buffer, 1, 1000);
+  	  	  	                          }
+  	  	  	          }
+  	  	             a=0;
+  	  	  	  }
 
 
 
@@ -212,15 +218,10 @@ int main(void)
     	   	    	           	          summa_noise += final_noise_massive[ir_count];
     	   	    	          	   }
     	   	    	               summa_noise=summa_noise/100;
-    	   	    	             //  send_data_by_uart (summa_noise);
-
-    	   	    	            send_data_by_uart_esp32_1 ();
-    	   	    	            HAL_Delay(100);
-    	   	    	            send_data_by_uart_esp32_2 ();
-    	   	    	          //  send_data_by_uart_esp32 ("i");
-    	   	    	          //  HAL_Delay(100);
+    	   	    	               send_data_by_uart (summa_noise);
     	   	    	               }
-
+    	   	    	      //     send_data_by_uart (i_count);
+    	   	    	      //     send_data_by_uart (noise_massive[count]);
     	   	    	           final_noise_massive[i_count]=noise_massive[count];
     	   	    	           i_count++;
               }
@@ -260,14 +261,14 @@ int main(void)
   	   	    	 	   	 	            write_byte(0x11, 0x00);  // LOFF_FLIP: Lead-Off Flip Register
    	   	    	 	   	 	          //  write_byte(0x12, 0x00);  // (Read-Only) LOFF_STATP: Lead-Off Positive Signal Status Register
    	  	    	 	   	 	          //  write_byte(0x13, 0x00);  // (Read-Only)LOFF_STATN: Lead-Off Negative Signal Status Register
-   	   	    	 	   	 	            write_byte(0x14, 0x80);  // 80// gpio  OF
+   	   	    	 	   	 	            write_byte(0x14, 0x80);  // gpio  OF
    	   	    	 	   	 	            write_byte(0x15, 0x20);  // MISC1
 
 
    	   	    	 	   	 	        //  write_byte(0x16, 0x00); // RESERVED
    	   	    	 	   	 	            write_byte(0x17, 0x00);  // CONFIG4
 
-  	   	    	 	    	  	     write_byte(CH1SET, 0x00); // 60
+  	   	    	 	    	  	     write_byte(CH1SET, 0x68); // 68
   	   	    	 	    	 	     write_byte(CH2SET, 0x00); //
   	   	    	 	    	 	     write_byte(CH3SET, 0x00); //
   	   	    	 	    	 	     write_byte(CH4SET, 0x00); //
@@ -353,27 +354,27 @@ int only_1_times=0;
 		                  { //LSB = (2 x VREF) // Gain / (2 ^ 24 - 1)
 		            	   result = output[1]-861; //-864//*((2*4.5)/16777215);//
 		                  }
- 	    	 //             send_data_by_uart(result);
+ 	    	          //    send_data_by_uart(result);
+ 	    	           send_data_by_uart_esp1();
+ 	    	           HAL_Delay(100);
+ 	    	           send_data_by_uart_esp2();
 						  average_result_massiv[average_count]=result;
 						  average_count++;
 
 						  average_result=0;
 //
-						      if (average_count==100)
-							  {
-							  average_count=0;
-							  for (int j=0; j<100;j++)
-							  {
-							  average_result = average_result_massiv[j]+average_result;
-							  }
-							  average_result=average_result/100;
-							//  send_data_by_uart(average_result);
-								  }
+//						      if (average_count==20)
+//							  {
+//							  average_count=0;
+//							  for (int j=0; j<20;j++)
+///							  {
+//							  average_result = average_result_massiv[j]+average_result;
+//							  }
+//							  average_result=average_result/20;
+////							  send_data_by_uart(average_result);
+//								  }
 //
-		//	 send_data_by_uart(result);
-			 //
-
-
+			// send_data_by_uart(result);
  	    	 }
 
  	//    	send_data_by_uart(measure_noise());
