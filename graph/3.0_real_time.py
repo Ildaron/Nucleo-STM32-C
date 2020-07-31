@@ -3,9 +3,7 @@ import os
 from PyQt5.QtWidgets import *
 from PyQt5.QtCore import *
 from PyQt5.QtGui import *
-import functools
 import numpy as np
-import random as rd
 import matplotlib
 matplotlib.use("Qt5Agg")
 from matplotlib.figure import Figure
@@ -14,12 +12,8 @@ from matplotlib.lines import Line2D
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 import time
 import threading
-
 import serial
-import datetime as dt
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-import numpy as np
 
 ComPort = serial.Serial('COM7') 
 ComPort.baudrate = 9600          
@@ -36,26 +30,24 @@ ron=1000
 class CustomMainWindow(QMainWindow):
     def __init__(self):
         super(CustomMainWindow, self).__init__()
-        # Define the geometry of the main window
+        # the main window
         self.setGeometry(300, 300, 800, 400)
-        self.setWindowTitle("my first window")
-        # Create FRAME_A
+        self.setWindowTitle("graph")
+
         self.FRAME_A = QFrame(self)
         self.FRAME_A.setStyleSheet("QWidget { background-color: %s }" % QColor(210,210,235,255).name())
         self.LAYOUT_A = QGridLayout()
         self.FRAME_A.setLayout(self.LAYOUT_A)
         self.setCentralWidget(self.FRAME_A)
-        # Place the zoom button
-        self.zoomBtn = QPushButton(text = 'zoom')
+        
+        #zoom button
+        self.zoomBtn = QPushButton(text = 'Scale')
         self.zoomBtn.setFixedSize(100, 50)
+        
+        
+        self.zoomBtn.clicked.connect(self.zoomBtnAction) #
 
-        
-        
-        self.zoomBtn.clicked.connect(self.zoomBtnAction) # ildaron
-
-        #self.zoomBtnAction()
-        
-        
+                
         self.LAYOUT_A.addWidget(self.zoomBtn, *(0,0))
         # Place the matplotlib figure
         self.myFig = CustomFigCanvas()
@@ -77,7 +69,7 @@ class CustomMainWindow(QMainWindow):
         self.myFig.addData(value)
         return
 
-''' End Class '''
+
 
 class CustomFigCanvas(FigureCanvas, TimedAnimation):
     def __init__(self):
@@ -126,12 +118,7 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
         self.addedData.append(value)
         return
 
-    def zoomIn(self, value):
-        bottom = self.ax1.get_ylim()[0]
-        top = self.ax1.get_ylim()[1]
-        
-      #  bottom += value
-       # top -= value
+    def zoomIn(self, value):       
         self.ax1.set_ylim(value+10000,value-10000)
         self.draw()
         return
@@ -160,16 +147,9 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
         self._drawn_artists = [self.line1, self.line1_tail, self.line1_head]
         return
 
-''' End Class '''
-
-# You need to setup a signal slot mechanism, to
-# send data to your GUI in a thread-safe way.
-# Believe me, if you don't do this right, things
-# go very very wrong..
 class Communicate(QObject):
     data_signal = pyqtSignal(float)
 
-''' End Class '''
 
 def dataSendLoop(addData_callbackFunc):
     # Setup the signal-slot mechanism.
@@ -183,8 +163,6 @@ def dataSendLoop(addData_callbackFunc):
          print (voltage)        
         except ValueError:
          voltage=0 
-       # xs.append(i)
-       # CustomFigCanvas.zoomIn(500)
 
         global voli
         voli = voltage
