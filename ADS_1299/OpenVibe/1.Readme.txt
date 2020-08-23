@@ -15,4 +15,4 @@ openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\applications\platform\acquisiti
 3.  Запуск на corn folder
         install_dependencies.sh
         bash build.sh 
-error  - build/extrsa-Releaase/platfrom/application/acquisition-server/CMakeFiles/openvibe-acquisition-served.dir/
+error  - build/extrsa-Releaase//application/platfromacquisition-server/CMakeFiles/openvibe-acquisition-served.dir/
