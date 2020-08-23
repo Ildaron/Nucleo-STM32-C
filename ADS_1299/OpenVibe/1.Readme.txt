@@ -12,4 +12,4 @@ openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\applications\platform\acquisiti
 2. В папку contrib/plugins/server-drivers  
            добавить папки src and share 
 
-2. Запуск на linux из папки dist/extras-Release
+3. Запуск на linux из папки dist/extras-Release
