@@ -14,4 +14,4 @@ openvibe-2.2.0-src.tar\openvibe-2.2.0-src\extras\applications\platform\acquisiti
 
 3.  Запуск на corn folder
         install_dependencies.sh
-        build.sh 
+        bash build.sh 
