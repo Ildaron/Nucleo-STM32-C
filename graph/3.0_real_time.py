@@ -115,7 +115,7 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
 
     def new_frame_seq(self):
         return iter(range(self.n.size))
-    def _init_draw(self):
+    def _init_draw(self):  # for quick operation
         lines = [self.line1, self.line1_tail, self.line1_head]
         for l in lines:
             l.set_data([], [])
