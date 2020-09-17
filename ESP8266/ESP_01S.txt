@@ -17,6 +17,6 @@ AT+CIPCLOSE=id Закрыть активное соединение соедин
 
 2. Данные с ESP_01 на ПК by telnet
 Для режима Single connection отправка идет так :AT+CIPSEND=length 
-AT+CIPSEND=0,5
+AT+CIPSEND=0,5  # PYTHON должен быть уже подлкючен иначе можно получим эту ошибку link is not valid
 Hello
 Для режима Multiple connection отправка идет так: AT+CIPSEND=id,length.
