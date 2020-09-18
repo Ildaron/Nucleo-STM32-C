@@ -20,3 +20,9 @@ AT+CIPCLOSE=id Закрыть активное соединение соедин
 AT+CIPSEND=0,5  # PYTHON должен быть уже подлкючен иначе можно получим эту ошибку link is not valid
 Hello
 Для режима Multiple connection отправка идет так: AT+CIPSEND=id,length.
+
+3. For send by UDP
+AT+CWJAP="name","password"
+AT+CIPMODE=0
+AT+CIPMUX=1
+sendby AT+CIPSTART=4,"UDP","Computer IP",8080,1112,0
