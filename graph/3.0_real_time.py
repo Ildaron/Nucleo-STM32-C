@@ -68,7 +68,7 @@ class CustomMainWindow(QMainWindow):
 
     def zoomBtnAction(self):
         print("zoom in")
-        self.myFig.zoomIn(5)
+        self.myFig.zoomIn(500)
         return
 
     def addData_callbackFunc(self, value):
@@ -133,11 +133,12 @@ class CustomFigCanvas(FigureCanvas, TimedAnimation):
         return
 
     def zoomIn(self, value):
+
         bottom = self.ax1.get_ylim()[0]
         top = self.ax1.get_ylim()[1]
         bottom += value
         top -= value
-        self.ax1.set_ylim(bottom,top)
+        self.ax1.set_ylim(voltage-500,voltage+500)
         self.draw()
         return
 
@@ -190,10 +191,11 @@ def dataSendLoop(addData_callbackFunc):
     check=11
     while(True):
               
-
+        global voltage
         voltage = ComPort.readline()
         
         try:
+
          voltage=int(voltage)
          
             
