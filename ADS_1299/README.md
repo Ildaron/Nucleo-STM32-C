@@ -8,15 +8,14 @@ File
 1.ADS_1299.ioc - STM32CubeMX
 
 
-#### 1. Обшая информация об сигналах ADS1299 которые задействоваеы 
-1.1. Reset - в низкое положение - сброс всех настроек
-1.2. Выход DRDY - становится высоким, когда преобразования начинается, и низким когда данныее готовы
-1.3  Два способа чтения данных: 
-      - RDATAC1 - команда непрперывного чтения
-      - RDATA -чтения данных при котором требуется команда для загрузки входного сдвига 
-1.4. Количество входных данных составляет 24 бита*8 = 192 бита, и 24 бита состояния, в итоге мы получаем 216 битов
-1.5 Чтобы получить данные с устройства после выполнения команды RDATAC,
-Удостоверьтесь, что либо вывод START имеет высокий уровень, либо выдается команда START. 
+#### 1.General pin information about ADS1299 signals  
+1.1. Reset - to the low position - reset all settings
+1.2.DRDY output - goes high when conversion starts and low when data is ready  
+1.3  Two ways to read data:  
+      - RDATA C1 - continuous read command  
+      - RDATA data read which requires a command to load the input offset  
+1.4. The amount of input data is 24 bits * 8 = 192 bits, and 24 status bits, in total we get 216 bits  
+1.5 To receive data from the device after executing the RDATAC command, the START pin must be high, or a START command has been issued.  
 
 #### 2. Конфигаруия регисторов управления
 2.1 Запись в регистор
