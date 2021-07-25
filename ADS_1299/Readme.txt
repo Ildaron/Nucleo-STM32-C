@@ -1,4 +1,5 @@
-Этот код для микроконтроллера STM32F407VE для получения данных с ADS1299 по 8 каналам. 
+This code is for STM32F407VE microcontroller to receive data from ADS1299 over 8 channels. =====================
+
 Обработка данных за счет BrainFlow https://brainflow.readthedocs.io/en/stable/  board_id: 17
 
 1. Обшая информация об сигналах ADS1299 которые задействоваеы 
