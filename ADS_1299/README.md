@@ -8,7 +8,7 @@ File
 1.ADS_1299.ioc - STM32CubeMX
 
 
-#### 1.General pin information about ADS1299 signals  
+#### 1.  General pin information about ADS1299 signals  
 1.1. Reset - to the low position - reset all settings
 1.2.DRDY output - goes high when conversion starts and low when data is ready  
 1.3  Two ways to read data:  
@@ -17,20 +17,20 @@ File
 1.4. The amount of input data is 24 bits * 8 = 192 bits, and 24 status bits, in total we get 216 bits  
 1.5 To receive data from the device after executing the RDATAC command, the START pin must be high, or a START command has been issued.  
 
-#### 2. Конфигаруия регисторов управления
-2.1 Запись в регистор
-Три байта конфигурации регисторов 
+#### 2. Configuration of control registers  
+2.1 Writing to the register  
+Three bytes of register configuration  
 0b11010110    
 0b11010100
 0b11100000
 
 First command byte: 010r rrrr, where r rrrr is the starting register address.
-Второй байт команды: 000n nnnn, где n nnnn - количество записываемых регистров - 1.
-2.2 Чтения с регистрв, аналогично но первые четые бита из байта следующего формата
+Second byte of the command: 000n nnnn, where n nnnn is the number of registers to be written - 1.
+2.2 Reading from a register, similarly but the first four bits from a byte of the following format
 BYTE 1 = 0010 0000 
 
-2.3 Скорость передач данных
-Предполагая, что CLK составляет 2,048 МГц, тогда tSDECODE (4 tCLK) составляет 1,96 мкс. Когда SCLK составляет 16 МГц, один байт может быть передан за 500 нс. Это время передачи байтов не соответствует спецификации tSDECODE; поэтому должна быть вставлена задержка, чтобы конец второго байта приходил на 1,46 мкс позже.
+2.3 Baud rate
+Assuming the CLK is 2.048 MHz, then tSDECODE (4 tCLK) is 1.96 μs. When SCLK is 16 MHz, one byte can be transmitted in 500 ns. This byte transfer time does not conform to the tSDECODE specification; therefore a delay must be inserted so that the end of the second byte arrives 1.46 µs later.  
 
 #### 3. SCLK
 tSCLK=500 ns - 2 MHz (12 page).
