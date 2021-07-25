@@ -1,7 +1,12 @@
 This code is for STM32F407VE microcontroller to receive data from ADS1299 over 8 channels. 
 =====================
 
-Обработка данных за счет BrainFlow https://brainflow.readthedocs.io/en/stable/  board_id: 17
+Data processing due BrainFlow https://brainflow.readthedocs.io/en/stable/  board_id: 17
+
+File 
+1.ADS_1299.c   - code for Atollic TrueSTUDIO for STM32 9.3.0
+1.ADS_1299.ioc - STM32CubeMX
+
 
 #### 1. Обшая информация об сигналах ADS1299 которые задействоваеы 
 1.1. Reset - в низкое положение - сброс всех настроек
